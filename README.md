@@ -3,5 +3,6 @@ choona.js
 
 Small Library for Large Scale Modular JavaScript Developement.
 
-Documentation
+Demo
 =============
+Visit https://github.com/nsisodiya/Demo-Scalable-App
