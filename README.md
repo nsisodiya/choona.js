@@ -23,20 +23,20 @@ API
 ```javascript
 	var <module-object> = new choona.loadApplication(<id-of-container>, <Application-Module>, <optional-configuration-object>);
 ```
-### <id-of-container>
+### id-of-container
 Every module/application need a document node to load itself. All the oprations of module/application is restricteded to
 that container Node. First argument is id of container node.
 
-### <Application-Object>
+### Application-Object
 This is the Application itself. This is the starting point of the code.
 
-### <optional-configuration-object>
+### optional-configuration-object
 This is an optional configuration argument. An Module can read its optinoal configuration from 
 ```
 this.config
 ```
 ### Return
-Constructor return <module>. <module> has its API.
+Constructor return *module*. *module* has its API.
 
 ## Module-object API
 
