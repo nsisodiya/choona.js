@@ -21,7 +21,12 @@ API
 ## Syntax - Choona.loadApplication
 
 ```javascript
-	var <module-object> = new choona.loadApplication(<id-of-container>, <Application-Module>, <optional-configuration-object>);
+	var <module-object> = new choona.startApp({
+		id : <id-of-container>, 
+		module: <Application-Module>, 
+		config: <optional-configuration-object>,
+		eventBus: <optional-local-EventBus>
+	});
 ```
 ### id-of-container
 Every module/application need a document node to load itself. All the oprations of module/application is restricteded to
@@ -32,6 +37,9 @@ This is the Application itself. This is the starting point of the code.
 
 ### optional-configuration-object
 This is an optional configuration argument. An Module can read its optinoal configuration from 
+
+### <local-EventBus>
+This is an optional eventBus, for local submodule isolated communication. We will explain it latter.
 ```
 this.config
 ```
@@ -54,17 +62,20 @@ This is end the application.
 ### Example
 
 ```javascript
-	var module1 = new choona.loadApplication("applicationContainer", {
-		start : function(){
-			$(this.$).append("<p>THIS IS HEADER PANEL</p>");
-	
-		},
-		end: function(){
-	
+	var module1 = new choona.startApp({
+		id: "applicationContainer", 
+		module: {
+			start : function(){
+				$(this.$).append("<p>THIS IS HEADER PANEL</p>");
+		
+			},
+			end: function(){
+		
+			}
 		}
 	});
-	module1.start();
-	module1.end();
+	
+	//module1.end();
 ```
 
 You can also split this into multiple files like
@@ -80,9 +91,12 @@ You can also split this into multiple files like
 		}
 	}
 	//File2.js
-	var module1 = new choona.loadApplication("applicationContainer", helloWorldApp);
-	module1.start();
-	module1.end();
+	var module1 = new choona.startApp({
+		id: "applicationContainer", 
+		module: helloWorldApp
+	});
+	
+	//module1.end();
 ```
 ## Syntax - Sandbox API
 Every Application Module can load multiple modules. Technically there is no difference between
@@ -136,10 +150,26 @@ Example
 ```
 ### this.sb.startModule  ==> Load a child module inside current module
 ```javascript
-	var <module-object> = this.sb.startModule(<id-of-container>, <Child-Module>, <optional-configuration-object>);
+	var <module-object> = this.sb.startModule({
+		id : <id-of-container>, 
+		module: <Application-Module>, 
+		config: <optional-configuration-object>,
+		eventBus: <optional-local-EventBus>
+	});
 ```
 ### this.sb.endModule  ==> End a child module inside current module
 ```javascript
 	var <module-object> = this.sb.endModule(<id-of-container>);
 ```
 
+### this.sb.getNewEventBus  ==> Get a local event bus
+```javascript
+	var myEventBus = this.sb.getNewEventBus();
+	//Use is eventBus to while creating new submodules
+	this.sb.startModule({
+		id : <id-of-container>, 
+		module: <Sub-Module>, 
+		config: <optional-configuration-object>,
+		eventBus: myEventBus
+	});
+```
