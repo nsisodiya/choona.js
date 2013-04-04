@@ -11,17 +11,20 @@ Demo
 =============
 Visit http://nsisodiya.github.com/Demo-Scalable-App
 
+
 Dependancy
 ============
-http://amplifyjs.com/
-
+choona.js Use Backbone events internally, you must include them.
+You can use jQuery or any other library if you want.
+* Underscore.js - http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js
+* Backbone.js - http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js
 
 API
 ====
-## Syntax - Choona.loadApplication
+## Syntax - choona.startApp
 
 ```javascript
-	var <module-object> = new choona.startApp({
+	var <module-object> = choona.startApp({
 		id : <id-of-container>, 
 		module: <Application-Module>, 
 		config: <optional-configuration-object>,
@@ -56,7 +59,7 @@ This is end the application.
 ### Example
 
 ```javascript
-	var module1 = new choona.startApp({
+	var module1 = choona.startApp({
 		id: "applicationContainer", 
 		module: {
 			start : function(){
