@@ -48,12 +48,6 @@ Constructor return *module*. *module* has its API.
 
 ## Module-object API
 
-### Start function
-```javascript
-<module-object>.start();
-```
-This is start the application.
-
 ### End function
 ```javascript
 <module-object>.end();
