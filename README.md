@@ -1,6 +1,6 @@
 choona.js
 =========
-Small Library for Large Scale Modular JavaScript Developement.
+A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
 
 License
 ========
