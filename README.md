@@ -144,7 +144,7 @@ Example
 ```
 ### this.sb.startModule  ==> Load a child module inside current module
 ```javascript
-	var <module-object> = this.sb.startModule({
+	this.sb.startModule({
 		id : <id-of-container>, 
 		module: <Application-Module>, 
 		config: <optional-configuration-object>,
