@@ -1,10 +1,20 @@
 choona.js
 =========
-Small Library for Large Scale Modular JavaScript Developement.
+A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
 
 License
 ========
 MIT: http://nsisodiya.mit-license.org
+
+Features
+=======
+* loose coupling of modules
+* modules can be tested separately
+* replacing any module without affecting other modules
+* concept of sub module
+* recursive end of submodule
+* local eventBus
+* Id can be repeated for modules
 
 
 Demo
