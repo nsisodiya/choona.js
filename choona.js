@@ -10,7 +10,7 @@
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
-	 1.2		Added support for template property.
+	 1.2.1		Added support for template property.
      			
      1.2 		Added Concept of EventBus,
      			Added Local Event Handling using Backbone.js
