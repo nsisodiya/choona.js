@@ -72,16 +72,13 @@ This is end the application.
 	var module1 = choona.startApp({
 		id: "applicationContainer", 
 		module: {
+			template: "<p>THIS IS HEADER PANEL</p>",
 			start : function(){
-				$(this.$).append("<p>THIS IS HEADER PANEL</p>");
-		
 			},
 			end: function(){
-		
 			}
 		}
 	});
-	
 	//module1.end();
 ```
 
@@ -89,12 +86,10 @@ You can also split this into multiple files like
 ```javascript
 	//File1.js
 	var helloWorldApp = {
+		template: "<p>THIS IS HEADER PANEL</p>",
 		start : function(){
-			$(this.$).append("<p>THIS IS HEADER PANEL</p>");
-	
 		},
 		end: function(){
-	
 		}
 	}
 	//File2.js
