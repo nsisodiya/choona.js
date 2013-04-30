@@ -1,4 +1,4 @@
-/*   choona.js 1.2 
+/*   choona.js 1.2.1 
      (c) 2011-2013 Narendra Sisodiya, narendra@narendrasisodiya.com
      
      choona.js is distributed under the MIT license.
@@ -10,6 +10,7 @@
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
+	 1.2		Added support for template property.
      			
      1.2 		Added Concept of EventBus,
      			Added Local Event Handling using Backbone.js
@@ -167,6 +168,9 @@ var choona = (function(){
 		this.sandbox = new Sandbox(id, node);
 		this.module = new defaultCreator(this.sandbox, config);
 		
+		if(typeof this.module.template === "string"){
+			this.module.$.innerHTML = this.module.template;
+		}
 		
 		if(typeof this.module.start === "function"){
 			this.module.start();
