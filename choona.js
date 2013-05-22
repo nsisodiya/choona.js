@@ -12,7 +12,10 @@
      Change Log
      1.3		Removed Backbone.js, As Now this Library support EventBus,
      			Added Code for EventBus.
-	 1.2.1		Added support for template property.
+			Added Supprot for Inheritance between modules by
+			Adding choona.extendModule function
+
+     1.2.1		Added support for template property.
      			
      1.2 		Added Concept of EventBus,
      			Added Local Event Handling using Backbone.js
@@ -34,11 +37,11 @@ var EventBus = function () {
 EventBus.prototype = {
 
     subscribe: function (newsPaper, address) {
-        if (!(typeof newsPaper === typeof "") || !(typeof address === "function")) {
+        if ((typeof newsPaper !== "string") || (typeof address !== "function")) {
             return -1;
         }
         var AList = this.NewsPaperList[newsPaper];
-        if (!(typeof AList === "object")) {
+        if (typeof AList !== "object") {
             AList = this.NewsPaperList[newsPaper] = [];
         }
         
@@ -51,14 +54,14 @@ EventBus.prototype = {
     },
     unsubscribe: function (orderId) {
         var O = this.OrderList[orderId];
-        if (!(O === undefined)) {
+        if (O !== undefined) {
             delete this.NewsPaperList[O.newsPaper][O.customer];
             delete O;
         }
     },
     publish: function (newsPaper, content) {
         var AddressList = this.NewsPaperList[newsPaper];
-        if (!(typeof AddressList === "undefined")) {
+        if (typeof AddressList !== "undefined") {
             var l = AddressList.length;
             for (var i = 0; i < l; i++) {
                 if (typeof AddressList[i] === "function") {
@@ -142,7 +145,7 @@ var choona = (function(){
 			
 		},
 		startModule: function(data){//public
-			if(typeof data.id != "string" || data.id == ""){
+			if(typeof data.id !== "string" || data.id === ""){
 				throw new Error("Id provided is not String or it is a blank sting");
 			}
 			if(this.moduleList[data.id] === undefined){
@@ -175,7 +178,7 @@ var choona = (function(){
 			parentEventBus = data.parentEventBus,
 			parentNode = data.parentNode;
 		
-		if( protoObj_Module === undefined && !(typeof protoObj_Module === typeof {})){
+		if( protoObj_Module === undefined && (typeof protoObj_Module === "object")){
 			throw new Error("data.module is undefined for data.id = " + data.id);
 			return;
 		}
@@ -240,9 +243,16 @@ var choona = (function(){
 		return new AppCore(data);
 	};
 	
-	
+	var extendModule = function (base, derived) {
+		var X = Object.create(base); //  Now X.__proto__ === base
+		for (var i in derived) {
+			X[i] = derived[i];
+		};
+		return X;
+	};
 	return {
 		startApp: startApp,
-		util: util
+		util: util,
+		extendModule: extendModule
 	};
 })();
