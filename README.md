@@ -3,11 +3,11 @@ choona.js
 A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
 
 
-Size (Less than 1KB)
-====================
+Size
+====
 It is very small is size 
-(725 Bytes when minified & gZipped)!
-
+(1.3 KB when minified & gZipped)!
+(3.6 KB when minified)
 
 License
 ========

@@ -24,11 +24,6 @@
     			
      			
      1.0.1		Added document.querySelector
-     
-     
-     @depends-on
-     	* underscore.js
-     	* backbone.js
 */
 
 var EventBus = function () {
