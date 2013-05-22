@@ -31,53 +31,47 @@
      	* backbone.js
 */
 
-var EventBus = function(){
-	this.NewsPaperList = {};
-	this.OrderList = [];
+var EventBus = function () {
+    this.NewsPaperList = {};
+    this.OrderList = [];
 };
 
 EventBus.prototype = {
 
-		subscribe: function(newsPaper, address){
-			//Check for NonEmpty String of newsPaper
-			if(!(typeof newsPaper === typeof "")){
-				return -1;
-			}
+    subscribe: function (newsPaper, address) {
+        if (!(typeof newsPaper === typeof "") || !(typeof address === "function")) {
+            return -1;
+        }
+        var AList = this.NewsPaperList[newsPaper];
+        if (!(typeof AList === "object")) {
+            AList = this.NewsPaperList[newsPaper] = [];
+        }
+        
+        var customer = AList.push(address) - 1 ;
 
-			if(!(typeof address === "function")){
-				return -1;
-			}
-			if(!(typeof this.NewsPaperList[newsPaper] === "object")){
-				this.NewsPaperList[newsPaper] = [];
-			}
-			var customer = this.NewsPaperList[newsPaper].length;
-
-			this.NewsPaperList[newsPaper][customer] = {address:address};
-			
-			return this.OrderList.push({newsPaper:newsPaper,customer:customer}) - 1 ;
-			//Order ID Index will be (Total Length - 1) & It will be useful for unsubscribe purpose
-			
-
-		},
-		unsubscribe: function(orderId){//Cancel a Order
-			if(this.OrderList[orderId] === undefined){
-				//No Order Found,
-			}else{
-				delete this.NewsPaperList[this.OrderList[orderId].newsPaper][this.OrderList[orderId].customer];
-				delete this.OrderList[orderId] ;
-			}
-		},
-		publish: function(newsPaper, content){
-			var N = this.NewsPaperList[newsPaper];
-			if(!(typeof N === "undefined")){ //Escape from Wrong NewsPaper
-				//Post the content of newspaper to all addresses 
-				for(var index=0; index < N.length; index++){
-					if(!(typeof N[index] === "undefined")){ //Escape from Unsubscribed Events
-						N[index].address.call(this, content);
-					}
-				}
-			}
-		}
+        return this.OrderList.push({
+            newsPaper: newsPaper,
+            customer: customer
+        }) - 1;
+    },
+    unsubscribe: function (orderId) {
+        var O = this.OrderList[orderId];
+        if (!(O === undefined)) {
+            delete this.NewsPaperList[O.newsPaper][O.customer];
+            delete O;
+        }
+    },
+    publish: function (newsPaper, content) {
+        var AddressList = this.NewsPaperList[newsPaper];
+        if (!(typeof AddressList === "undefined")) {
+            var l = AddressList.length;
+            for (var i = 0; i < l; i++) {
+                if (typeof AddressList[i] === "function") {
+                    AddressList[i].call(this, content);
+                }
+            }
+        }
+    }
 };
 
 var choona = (function(){
