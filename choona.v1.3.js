@@ -1,27 +1,85 @@
-/*   choona.js 1.0.2 
+/*   choona.js 1.3
      (c) 2011-2013 Narendra Sisodiya, narendra@narendrasisodiya.com
      
      choona.js is distributed under the MIT license.
+     
      For all details and documentation:
      https://github.com/nsisodiya/choona.js
+  
      For demos using Choona.js
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
-     1.0.2 - 	Added Concept of EventBus,
-     			Added Local Event Handling using Backbone.js 
-     			modified Erase UI, 
-     			App-Module Started module cannot be called start() again.
-     			Added startApp Method, loadApplication is removed now
-     			AppCore now accept Data Object rather that argument list
+     1.3		Removed Backbone.js, As Now this Library support EventBus,
+     			Added Code for EventBus.
+	 1.2.1		Added support for template property.
      			
-     1.0.1 - 	Added document.querySelector
+     1.2 		Added Concept of EventBus,
+     			Added Local Event Handling using Backbone.js
+			Removed amplify.js
+     			modified Erase UI, 
+    			Added startApp Method, loadApplication is removed now
+    			AppCore now accept Data Object rather that argument list,
+    			removed start() function for ApplicationModule.
+    			
+     			
+     1.0.1		Added document.querySelector
      
      
      @depends-on
      	* underscore.js
      	* backbone.js
 */
+
+var EventBus = function(){
+	this.NewsPaperList = {};
+	this.OrderList = [];
+};
+
+EventBus.prototype = {
+
+		subscribe: function(newsPaper, address){
+			//Check for NonEmpty String of newsPaper
+			if(!(typeof newsPaper === typeof "")){
+				return -1;
+			}
+
+			if(!(typeof address === "function")){
+				return -1;
+			}
+			if(!(typeof this.NewsPaperList[newsPaper] === "object")){
+				this.NewsPaperList[newsPaper] = [];
+			}
+			var customer = this.NewsPaperList[newsPaper].length;
+
+			this.NewsPaperList[newsPaper][customer] = {address:address};
+			
+			return this.OrderList.push({newsPaper:newsPaper,customer:customer}) - 1 ;
+			//Order ID Index will be (Total Length - 1) & It will be useful for unsubscribe purpose
+			
+
+		},
+		unsubscribe: function(orderId){//Cancel a Order
+			if(this.OrderList[orderId] === undefined){
+				//No Order Found,
+			}else{
+				delete this.NewsPaperList[this.OrderList[orderId].newsPaper][this.OrderList[orderId].customer];
+				delete this.OrderList[orderId] ;
+			}
+		},
+		publish: function(newsPaper, content){
+			var N = this.NewsPaperList[newsPaper];
+			if(!(typeof N === "undefined")){ //Escape from Wrong NewsPaper
+				//Post the content of newspaper to all addresses 
+				for(var index=0; index < N.length; index++){
+					if(!(typeof N[index] === "undefined")){ //Escape from Unsubscribed Events
+						N[index].address.call(this, content);
+					}
+				}
+			}
+		}
+};
+
 var choona = (function(){
 	var util = {
 		debug : false,
@@ -33,12 +91,14 @@ var choona = (function(){
 		}
 	};
 	
-	var GlobalEventBus = _.extend({}, Backbone.Events);
+	var GlobalEventBus = new EventBus();
 	
 	var Sandbox = function(id){
 		this.id = id;
+		this.$ = null;
 		this.topicList = {};
 		this.moduleList = {};
+		this.eventBus = null;
 	};
 	Sandbox.Private = {
 		endAllModules: function(){
@@ -62,27 +122,34 @@ var choona = (function(){
 			}else{
 				return this.moduleList[id];
 			}
+		},
+		endSandbox: function(){
+			//This will delete resource initialised by Sandbox
+			
+			delete this.$;
+			delete this.id;
+			delete this.moduleList ;
+			delete this.eventBus;
+			delete this.topicList;
 		}
 	};
+	
 	Sandbox.prototype = {
 		subscribe : function(topic, callback){//publish
-			this.topicList[topic] = this.eventBus.on(topic, callback);
+			this.topicList[topic] = this.eventBus.subscribe(topic, callback);
 			util.log('subscribed topic -> ' + topic);
-			return this.topicList[topic];
 		},
 		getNewEventBus : function(){
-			return _.extend({}, Backbone.Events);
+			return new EventBus();
 		},
 		unsubscribe : function(topic){
-			//amplify.unsubscribe(topic, this.topicList[topic]);
-			this.eventBus.off(topic);
+			this.eventBus.unsubscribe(this.topicList[topic]);
 			delete this.topicList[topic];
 			util.log('cleared topic -> ' + topic);
 		},
 		publish: function(topic, val){//public
 			util.log('published -> ' +  topic  + ' = ' + val);
-			//amplify.publish(topic, val);
-			this.eventBus.trigger(topic, val);
+			this.eventBus.publish(topic, val);
 			
 		},
 		startModule: function(data){//public
@@ -97,9 +164,9 @@ var choona = (function(){
 				data.parentNode = this.$;
 				data.parentEventBus = this.eventBus;
 				
-				this.moduleList[data.id] = new AppCore(data);
+				this.moduleList[data.id] = startApp(data);
+
 				
-				this.moduleList[data.id].start();
 			}else{
 				throw new Error("data.id::" + data.id  + " is already contains a module.  Please provide separate id new module");
 			}
@@ -119,6 +186,10 @@ var choona = (function(){
 			parentEventBus = data.parentEventBus,
 			parentNode = data.parentNode;
 		
+		if( protoObj_Module === undefined && !(typeof protoObj_Module === typeof {})){
+			throw new Error("data.module is undefined for data.id = " + data.id);
+			return;
+		}
 		var defaultCreator = function(sandbox, config){
 			this.sb = sandbox;
 			this.id = sandbox.id;			//Id of Container - This may be require to create Unique Ids
@@ -142,41 +213,47 @@ var choona = (function(){
 			this.config = config;
 		};
 		defaultCreator.prototype = protoObj_Module;
-		this.module = new defaultCreator( new Sandbox(id) , config);
-		this.started = false;
-	};
-	AppCore.prototype = {
-		start: function(){
-			if(this.started === false){
-				this.module.start();
-				this.started = true;
-				util.log('started module -> ' + this.module.id);
-			}else{
-				throw new Error("Application already started");
-			}
+		
+		this.sandbox = new Sandbox(id, node);
+		this.module = new defaultCreator(this.sandbox, config);
+		
+		if(typeof this.module.template === "string"){
+			this.module.$.innerHTML = this.module.template;
+		}
+		
+		if(typeof this.module.start === "function"){
+			this.module.start();
 			
-		},
-		end: function(){
-			Sandbox.Private.endAllModules.call(this.module.sb);
-			if(typeof this.module.end === "function"){
-				this.module.end();	
-			}
-			Sandbox.Private.eraseUI.call(this.module.sb);
-			Sandbox.Private.unsubscribeAll.call(this.module.sb);
-			this.started = false;
-			util.log('ended module -> ' +  this.module.id);
+			util.log('started module -> ' + this.module.id);
+		}else{
+			throw new Error("data.module.start is undefined for data.id = " + this.module.id);
 		}
 	};
 	
-	AppCoreFactory = function(data){
-		var a = new AppCore(data);
-		a.start();
-		return a;
+	AppCore.prototype = {
+		end: function(){
+			Sandbox.Private.endAllModules.call(this.sandbox);
+			if(typeof this.module.end === "function"){
+				this.module.end();	
+			}
+			Sandbox.Private.eraseUI.call(this.sandbox);
+			Sandbox.Private.unsubscribeAll.call(this.sandbox);
+			Sandbox.Private.endSandbox.call(this.sandbox);
+			util.log('ended module -> ' +  this.module.id);
+			
+			delete this.module;
+			delete this.sandbox;
+			
+		}
+	};
+	
+	startApp = function(data){
+		return new AppCore(data);
 	};
 	
 	
 	return {
-		startApp: AppCoreFactory,
+		startApp: startApp,
 		util: util
 	};
 })();

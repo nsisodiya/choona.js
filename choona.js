@@ -1,4 +1,4 @@
-/*   choona.js 1.2.1 
+/*   choona.js 1.3
      (c) 2011-2013 Narendra Sisodiya, narendra@narendrasisodiya.com
      
      choona.js is distributed under the MIT license.
@@ -10,6 +10,8 @@
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
+     1.3		Removed Backbone.js, As Now this Library support EventBus,
+     			Added Code for EventBus.
 	 1.2.1		Added support for template property.
      			
      1.2 		Added Concept of EventBus,
@@ -29,6 +31,55 @@
      	* backbone.js
 */
 
+var EventBus = function(){
+	this.NewsPaperList = {};
+	this.OrderList = [];
+};
+
+EventBus.prototype = {
+
+		subscribe: function(newsPaper, address){
+			//Check for NonEmpty String of newsPaper
+			if(!(typeof newsPaper === typeof "")){
+				return -1;
+			}
+
+			if(!(typeof address === "function")){
+				return -1;
+			}
+			if(!(typeof this.NewsPaperList[newsPaper] === "object")){
+				this.NewsPaperList[newsPaper] = [];
+			}
+			var customer = this.NewsPaperList[newsPaper].length;
+
+			this.NewsPaperList[newsPaper][customer] = {address:address};
+			
+			return this.OrderList.push({newsPaper:newsPaper,customer:customer}) - 1 ;
+			//Order ID Index will be (Total Length - 1) & It will be useful for unsubscribe purpose
+			
+
+		},
+		unsubscribe: function(orderId){//Cancel a Order
+			if(this.OrderList[orderId] === undefined){
+				//No Order Found,
+			}else{
+				delete this.NewsPaperList[this.OrderList[orderId].newsPaper][this.OrderList[orderId].customer];
+				delete this.OrderList[orderId] ;
+			}
+		},
+		publish: function(newsPaper, content){
+			var N = this.NewsPaperList[newsPaper];
+			if(!(typeof N === "undefined")){ //Escape from Wrong NewsPaper
+				//Post the content of newspaper to all addresses 
+				for(var index=0; index < N.length; index++){
+					if(!(typeof N[index] === "undefined")){ //Escape from Unsubscribed Events
+						N[index].address.call(this, content);
+					}
+				}
+			}
+		}
+};
+
 var choona = (function(){
 	var util = {
 		debug : false,
@@ -40,7 +91,7 @@ var choona = (function(){
 		}
 	};
 	
-	var GlobalEventBus = _.extend({}, Backbone.Events);
+	var GlobalEventBus = new EventBus();
 	
 	var Sandbox = function(id){
 		this.id = id;
@@ -85,22 +136,20 @@ var choona = (function(){
 	
 	Sandbox.prototype = {
 		subscribe : function(topic, callback){//publish
-			this.topicList[topic] = this.eventBus.on(topic, callback);
+			this.topicList[topic] = this.eventBus.subscribe(topic, callback);
 			util.log('subscribed topic -> ' + topic);
 		},
 		getNewEventBus : function(){
-			return _.extend({}, Backbone.Events);
+			return new EventBus();
 		},
 		unsubscribe : function(topic){
-			//amplify.unsubscribe(topic, this.topicList[topic]);
-			this.eventBus.off(topic);
+			this.eventBus.unsubscribe(this.topicList[topic]);
 			delete this.topicList[topic];
 			util.log('cleared topic -> ' + topic);
 		},
 		publish: function(topic, val){//public
 			util.log('published -> ' +  topic  + ' = ' + val);
-			//amplify.publish(topic, val);
-			this.eventBus.trigger(topic, val);
+			this.eventBus.publish(topic, val);
 			
 		},
 		startModule: function(data){//public

@@ -17,6 +17,10 @@ Features
 * Id can be repeated for modules
 
 
+Version
+==========
+please use choona.js 1.3 version ! old versions are not useful.
+
 Demo
 =============
 Visit http://nsisodiya.github.com/Demo-Scalable-App
@@ -24,10 +28,9 @@ Visit http://nsisodiya.github.com/Demo-Scalable-App
 
 Dependancy
 ============
-choona.js Use Backbone events internally, you must include them.
-You can use jQuery or any other library if you want.
-* Underscore.js - http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js
-* Backbone.js - http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.2/backbone-min.js
+choona.js do not has any dependancy. It is written is Plain JavaSrcipt,
+YOu can use jQuery as base library. I do not like creating base library or a Base
+Library wrapper
 
 API
 ====
