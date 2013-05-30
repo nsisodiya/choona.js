@@ -4,7 +4,9 @@
   "main": [
     "./choona.js"
   ],
+  "license": "MIT",
   "gitHead": "9c3eff36839901e7ddfd9e679efa2c47c14eb373",
+  "readme": "Choona.js Component\n================\n",
   "readmeFilename": "README.md",
   "_id": "choona.js@1.3",
   "description": "framework for developing large scale modular JavaScript applications",
