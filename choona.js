@@ -10,10 +10,11 @@
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
-     1.3		Removed Backbone.js, As Now this Library support EventBus,
+	 1.3.1		Added Supprot for Inheritance between modules by
+				Adding choona.extendModule function
+
+     1.3.0		Removed Backbone.js, As Now this Library support EventBus,
      			Added Code for EventBus.
-			Added Supprot for Inheritance between modules by
-			Adding choona.extendModule function
 
      1.2.1		Added support for template property.
      			
