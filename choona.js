@@ -1,4 +1,4 @@
-/*   choona.js 1.3
+/*   choona.js 1.3.2
      (c) 2011-2013 Narendra Sisodiya, narendra@narendrasisodiya.com
      
      choona.js is distributed under the MIT license.
@@ -10,7 +10,9 @@
      http://nsisodiya.github.com/Demo-Scalable-App/
 
      Change Log
-	 1.3.1		Added Supprot for Inheritance between modules by
+     1.3.2		7 March 2014 -- Throw error when unable to find DOM element for loading a module.
+     
+     1.3.1		Added Supprot for Inheritance between modules by
 				Adding choona.extendModule function
 
      1.3.0		Removed Backbone.js, As Now this Library support EventBus,
@@ -190,6 +192,10 @@ var choona = (function(){
 				this.$ = document.querySelector( "#" + this.id);
 			}else{
 				this.$ = parentNode.querySelector( "#" + this.id);
+			}
+			if(this.$ === null){
+				throw new Error("Unable to Load Module, as I am unable to find id=\""+ this.id +"\" inside DOM");
+				return;
 			}
 			this.sb.$ = this.$; // SandBox must contains reference to module Container
 			if(eventBus === undefined){
