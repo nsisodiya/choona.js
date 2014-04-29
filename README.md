@@ -2,6 +2,10 @@ choona.js
 =========
 A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
 
+Who use choona.js
+=================
+* Unicommerce (http://www.unicommerce.com/) use choona.js for base architecture for its core product "Uniware". Uniware is India's best SaaS application for end-to-end management of Warehouse Management. Uniware UI is build upon choona.js and other micro frameworks.
+* Here is the related blog entry- http://blog.narendrasisodiya.com/2013/09/my-javascript-stack-for-large-scale.html
 
 Size
 ====
