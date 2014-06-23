@@ -42,6 +42,7 @@
     initialize: function (id, $, config, parentEventBus) {
       choona.BaseModule.parent.call(this);
 
+      var self = this;
       this.$ = $;
       this.config = config;
 
@@ -53,28 +54,12 @@
         domEvents: []
       };
 
-      this._setUpjQueryElement();
-      this._loadTemplate();
-      /*
-       * Please note that _startIsolatedEventBus() must be called before _subscribeSandboxEvents()
-       * because, you need to get event bus for
-       * */
-      this._startIsolatedEventBus();
-      this._subscribeAllSandboxEvents();
-      this._subscribeDomEvents();
-      this._callPreStart();
-      //TODO - mercikill
-      this._startModule();
-    },
-    _startModule: function() {
-      if (typeof this.start === "function") {
-        this.start();
-        choona.Util.log("started module -> " + this._sandBoxData.id);
-      } else {
-        throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
+      //setup this.$el & this.$$ if jQuery present.
+      if (jQuery) {
+        this.$el = this.$$ = jQuery(this.$);
       }
-    },
-    _loadTemplate: function () {
+
+      //Loading Template !!
       //TODO -Support for underscore template
       if (typeof this.template === "string") {
         this.$.innerHTML = this.template;
@@ -82,41 +67,58 @@
       if (typeof this.template === "function") {
         this.$.innerHTML = this.template();
       }
-    },
-    _startIsolatedEventBus: function () {
+      
+      /*
+       * Please note that _startIsolatedEventBus() must be called before _subscribeSandboxEvents()
+       * because, you need to get event bus for
+       * */
+
+      //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create conflicts in naming
       if (this.isolatedEventBus === true) {
-        this._sandBoxData.eventBus = this._getNewEventBus();
+        this._sandBoxData.eventBus = new choona.EventBus();
       }
-    },
-    _getNewEventBus: function () {
-      return new choona.EventBus();
+
+      //subscribeAll SandboxEvents();
+
+      if (this.sandboxEvents !== undefined) {
+        choona.Util.for(this.sandboxEvents, function (methodName, eventName) {
+          self.subscribeSandboxEvent(eventName, methodName);
+        });
+      }
+
+      //subscribe all DOM events !
+
+      if (this.domEvents !== undefined) {
+        this.on(this.domEvents);
+      }
+
+      //Calling the global preStart function !
+      if (typeof choona.Settings.Global.preStart === "function") {
+        choona.Settings.Global.preStart.call(this);
+      }
+
+      //TODO - mercikill
+      if (typeof this.start === "function") {
+        this.start();
+        choona.Util.log("started module -> " + this._sandBoxData.id);
+      } else {
+        throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
+      }
     },
     _getEventBus: function () {
       return this._sandBoxData.eventBus;
     },
-    _setUpjQueryElement: function () {
-      //setup this.$el & this.$$ if jQuery present.
-      if (jQuery) {
-        this.$el = this.$$ = jQuery(this.$);
-      }
-    },
-    subscribeSandboxEvent: function (topic, callback) {
+    subscribeSandboxEvent: function (topic, methodName) {
+      var self = this;
+      var callback = function () {
+        self[methodName].apply(self, arguments);
+      };
       if (this._sandBoxData.topicList[topic] === undefined) {
         this._sandBoxData.topicList[topic] = [];
       }
       var bus = this._getEventBus();
       this._sandBoxData.topicList[topic].push(bus.subscribe(topic, callback));
       choona.Util.log("subscribed topic -> " + topic);
-    },
-    _subscribeAllSandboxEvents: function () {
-      var self = this;
-      if (this.sandboxEvents !== undefined) {
-        choona.Util.for(this.sandboxEvents, function (methodName, eventName) {
-          self.subscribeSandboxEvent(eventName, function () {
-            self[methodName].apply(self, arguments);
-          });
-        });
-      }
     },
     unSubscribeSandboxEvent: function (topic) {
       choona.Util.log("unsubscribing topic -> " + topic);
@@ -153,30 +155,33 @@
       delete this._sandBoxData.subModuleList[id];
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
-    _subscribeDomEvents: function () {
-      var module = this;
-      if (module.domEvents !== undefined) {
-        choona.Util.for(module.domEvents, function (hander, key) {
-          var arr = key.split(" ");
-          var eventName = arr.shift();
-          var hash = arr.join(" ");
-          var callback = function (e) {
-            if (hash === "") {
-              module[hander].call(module, e, e.target);
-            }else{
-              if (e.target.matches(hash)) {
-                module[hander].call(module, e, e.target);
-              }
+    on: function (obj) {
+      //We use {"eventName hash":"handler"} kind of notation !
+
+      var self = this;
+      choona.Util.for(obj, function (handler, key) {
+        //TODO replace multiple space with single space
+        var arr = key.split(" ");
+        var eventName = arr.shift();
+        var hash = arr.join(" ").trim();
+        var callback = function (e) {
+          if (hash === "") {
+            self[handler].call(self, e, e.target);
+          }else{
+            if (e.target.matches(hash)) {
+              self[handler].call(self, e, e.target);
             }
-          };
-          var eventId = elementAddEventListener.call(module.$, eventName, callback, false);
-          module._sandBoxData.domEvents.push({eventName:eventName, callback:callback});
-        });
-      }
+          }
+        };
+        elementAddEventListener.call(self.$, eventName, callback, false);
+        self._sandBoxData.domEvents[key] = {eventName:eventName, callback:callback };
+      });
     },
-    _callPreStart: function () {
-      if (typeof choona.Settings.Global.preStart === "function") {
-        choona.Settings.Global.preStart.call(this);
+    off: function (key) {
+      //Unsubscribe dom event
+      var v = this._sandBoxData.domEvents[key];
+      if(v !== undefined && typeof v === "object"){
+        elementRemoveEventListener.call(this.$, v.eventName, v.callback);
       }
     },
     _endModuleResources: function () {
@@ -188,9 +193,9 @@
 
 
       //endAllSubModules
-      var module = this;
+      var self = this;
       choona.Util.for(this._sandBoxData.subModuleList, function (v,id) {
-        module.endSubModule(id);
+        self.endSubModule(id);
       });
 
       if (typeof this.end === "function") {
@@ -198,8 +203,8 @@
       }
 
       //unSubscribing All DOM events
-      module._sandBoxData.domEvents.map(function (v,i) {
-        elementRemoveEventListener.call(module.$, v.eventName, v.callback);
+      this._sandBoxData.domEvents.map(function (v,key) {
+        self.off(key);
       });
 
       //Remove all HTML inside this.$
@@ -207,7 +212,7 @@
 
       //unSubscribe All SandboxEvents
       choona.Util.for(this._sandBoxData.topicList, function (v,topic) {
-        module.unSubscribeSandboxEvent(topic);
+        self.unSubscribeSandboxEvent(topic);
       });
 
 
