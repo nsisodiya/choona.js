@@ -35,15 +35,15 @@
   if (!ElementProto.matches) {
     ElementProto.matches = ElementProto.matchesSelector;
   }
-
+  var log = choona.Util.log;
 
 
   choona.BaseModule = choona.Base.extend({
-    initialize: function (id, $, config, parentEventBus) {
-      choona.BaseModule.parent.call(this);
+    initialize: function (id, domEle, config, parentEventBus) {
+      choona.Base.parent.call(this);
 
       var self = this;
-      this.$ = $;
+      this.$ = domEle;
       this.config = config;
 
       this._sandBoxData = {
@@ -61,12 +61,14 @@
 
       //Loading Template !!
       //TODO -Support for underscore template
+      var str;
       if (typeof this.template === "string") {
-        this.$.innerHTML = this.template;
+        str = this.template;
       }
       if (typeof this.template === "function") {
-        this.$.innerHTML = this.template();
+        str = this.template();
       }
+      this.$.innerHTML = choona.Settings.postTemplateProcessing(str);
 
       /*
        * Please note that _startIsolatedEventBus() must be called before _subscribeSandboxEvents()
@@ -93,15 +95,16 @@
       }
 
       //Calling the global preStart function !
-      if (typeof choona.Settings.Global.preStart === "function") {
-        choona.Settings.Global.preStart.call(this);
+      if (typeof choona.Settings.preStart === "function") {
+        choona.Settings.preStart.call(this);
       }
 
       //TODO - mercikill
       if (typeof this.start === "function") {
         this.start();
-        choona.Util.log("started module -> " + this._sandBoxData.id);
+        log("started module -> " + this._sandBoxData.id);
       } else {
+        //TODO - move all these message to common place !
         throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
       }
     },
@@ -118,10 +121,10 @@
       }
       var bus = this._getEventBus();
       this._sandBoxData.topicList[topic].push(bus.subscribe(topic, callback));
-      choona.Util.log("subscribed topic -> " + topic);
+      log("subscribed topic -> " + topic);
     },
     unSubscribeSandboxEvent: function (topic) {
-      choona.Util.log("unsubscribing topic -> " + topic);
+      log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
       if (this._sandBoxData.topicList[topic] !== undefined) {
         this._sandBoxData.topicList[topic].map(function (v, i) {
@@ -131,7 +134,7 @@
       }
     },
     publishSandboxEvent: function (topic, val) {
-      choona.Util.log("publishing topic ->" + topic + " = " + val);
+      log("publishing topic ->" + topic + " = " + val);
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
@@ -188,8 +191,8 @@
     _endModuleResources: function () {
 
       //call postEnd();
-      if (typeof choona.Settings.Global.postEnd === "function") {
-        choona.Settings.Global.postEnd.call(this);
+      if (typeof choona.Settings.postEnd === "function") {
+        choona.Settings.postEnd.call(this);
       }
 
 
@@ -222,7 +225,7 @@
       delete this.$el;
       delete this.$$;
       delete this.config;
-      choona.Util.log("ended module -> " + this._sandBoxData.id);
+      log("ended module -> " + this._sandBoxData.id);
       delete this._sandBoxData.id;
       delete this._sandBoxData.subModuleList;
       delete this._sandBoxData.eventBus;

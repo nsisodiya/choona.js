@@ -44,6 +44,14 @@
       if (protoObjModule === undefined && typeof protoObjModule !== "object") {
         throw new Error("moduleConf.module is undefined or not an object for moduleConf.id = " + this.id);
       }
+      //TODO - you are assigning initialize to protoObj , If you load module again and again, this will be overwritten
+      /* possible solution -
+         var x = Object.create(protoObjModule);
+         x.initialize = function(){
+         }
+         var ModuleConstructor = choona.BaseModule.extend(x);
+      *
+      * */
       protoObjModule.initialize = function () {
         choona.BaseModule.apply(this, arguments);
       };

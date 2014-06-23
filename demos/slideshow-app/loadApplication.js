@@ -2,7 +2,7 @@ _.templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 _.templateSettings.evaluate = /<!--([\s\S]+?)-->/g;
 _.templateSettings.escape = /\{\{-(.+?)\}\}/g;
 
-choona.Settings.Global.preStart = function(){
+choona.Settings.preStart = function(){
   var self = this;
   $.get(this.template).done(function (data) {
     self.$$.html(_.template(data));

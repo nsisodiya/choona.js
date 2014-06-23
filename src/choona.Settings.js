@@ -17,17 +17,15 @@
 (function () {
   "use strict";
   choona.Settings = {
-    Global: {
-      preStart: function () {
+    preStart: function () {
 
-      },
-      postEnd: function () {
-
-      },
-      templateStrToHtml: function (str) {
-        return str;
-      }
     },
+    postEnd: function () {
+
+    },
+    postTemplateProcessing: function (str) {
+      return str;
+    }
     debug: false,
     isConsoleAvailable: false
   };
