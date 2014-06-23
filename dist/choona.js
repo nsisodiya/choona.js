@@ -432,6 +432,11 @@ choona.Base = choona.klass({});
     },
     _endModuleResources: function () {
 
+      //call postEnd();
+      if (typeof choona.Settings.Global.postEnd === "function") {
+        choona.Settings.Global.postEnd.call(this);
+      }
+
 
       //endAllSubModules
       var module = this;
@@ -455,6 +460,8 @@ choona.Base = choona.klass({});
       choona.Util.for(this._sandBoxData.topicList, function (v,topic) {
         module.unSubscribeSandboxEvent(topic);
       });
+
+
 
       delete this.$;
       delete this.$el;
