@@ -157,7 +157,6 @@
     },
     on: function (obj) {
       //We use {"eventName hash":"handler"} kind of notation !
-
       var self = this;
       choona.Util.for(obj, function (handler, key) {
         key = key.trim().replace(/ +/g," ");
