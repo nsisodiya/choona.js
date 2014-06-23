@@ -67,7 +67,7 @@
       if (typeof this.template === "function") {
         this.$.innerHTML = this.template();
       }
-      
+
       /*
        * Please note that _startIsolatedEventBus() must be called before _subscribeSandboxEvents()
        * because, you need to get event bus for
@@ -160,10 +160,12 @@
 
       var self = this;
       choona.Util.for(obj, function (handler, key) {
-        //TODO replace multiple space with single space
+        key = key.trim().replace(/ +/g," ");
+
         var arr = key.split(" ");
         var eventName = arr.shift();
-        var hash = arr.join(" ").trim();
+        var hash = arr.join(" ");
+
         var callback = function (e) {
           if (hash === "") {
             self[handler].call(self, e, e.target);
