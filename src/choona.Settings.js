@@ -25,7 +25,7 @@
     },
     postTemplateProcessing: function (str) {
       return str;
-    }
+    },
     debug: false,
     isConsoleAvailable: false
   };

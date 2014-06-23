@@ -98,7 +98,7 @@ choona.Base = choona.klass({});
     },
     postTemplateProcessing: function (str) {
       return str;
-    }
+    },
     debug: false,
     isConsoleAvailable: false
   };
