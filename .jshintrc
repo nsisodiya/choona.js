@@ -1,0 +1,29 @@
+{
+	"curly": true,
+  "forin": true,
+  "immed": true,
+  "newcap": true,
+  "noarg": true,
+  "noempty": true,
+  "quotmark": "double",
+  "eqnull": true,
+	"eqeqeq": false,
+	"plusplus": false,
+  //"onevar": true,
+	"camelcase": true,
+	"latedef": "nofunc",
+	"trailing": true,
+	"multistr":true,
+	"globalstrict":false,
+	"strict":true,
+  "undef": true,
+  "globals": {
+		"module": true,
+		"console": true,
+		"document":true,
+    "choona": true,
+    "jQuery": true,
+    "Element": true
+	}
+}
+

@@ -1,0 +1,20 @@
+<ul id="todo-list">
+<!-- _.each(obj.todoList, function(v,i){ -->
+<li data-index="{{i}}"  <!--if(v.done){ --> class="done" <!--  }--> >
+    <div class="view">
+        <input class="toggle" type="checkbox" <!-- if(v.done){ --> checked="checked" <!-- }--> />
+        <label> {{v.title}} </label>
+        <a class="destroy"></a>
+    </div>
+    <input class="edit" type="text" value="{{v.title}}" />
+</li>
+<!-- }) -->
+
+</ul>
+
+<!-- if(obj.todoList.length !== 0){ -->
+<footer>
+    <a id="clear-completed">Clear {{ obj.totalCompletedItems() }} completed items</a>
+    <div class="todo-count"><b>{{obj.totalUnfinishedItems() }}</b> items left</div>
+</footer>
+<!-- }-->

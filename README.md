@@ -1,6 +1,7 @@
 choona.js
 =========
 A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
+fully inspired by - https://github.com/eric-brechemier/lb_js_scalableApp
 
 
 Size
