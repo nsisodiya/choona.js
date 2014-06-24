@@ -14,16 +14,16 @@
  * @author Narendra Sisodiya
  */
 
-(function () {
+(function() {
   "use strict";
   choona.Settings = {
-    preStart: function () {
+    preStart: function() {
 
     },
-    postEnd: function () {
+    postEnd: function() {
 
     },
-    postTemplateProcessing: function (str) {
+    postTemplateProcessing: function(str) {
       return str;
     },
     debug: false,

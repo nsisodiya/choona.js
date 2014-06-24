@@ -14,13 +14,13 @@
  */
 
 
-(function () {
+(function() {
   "use strict";
   choona.Model = choona.EventBus.extend({
-    initialize: function () {
+    initialize: function() {
       choona.EventBus.call(this);
     },
-    publishModalChanges: function () {
+    publishModalChanges: function() {
       this.publish("change");
     }
   });

@@ -13,10 +13,10 @@
 
 var choona = {};
 
-choona.klass = (function () {
+choona.klass = (function() {
   "use strict";
-  var klass = function (ChildProto) {
-    var Child = function () {
+  var klass = function(ChildProto) {
+    var Child = function() {
       if (typeof ChildProto.initialize === "function") {
         ChildProto.initialize.apply(this, arguments);
       }
@@ -41,10 +41,10 @@ choona.klass = (function () {
     return Child;
   };
 
-  klass.Singleton = function (CLASS_OBJ) {
+  klass.Singleton = function(CLASS_OBJ) {
     var CLASS = klass(CLASS_OBJ);
     var singleObj = new CLASS();
-    return function () {
+    return function() {
       return singleObj;
     };
   };

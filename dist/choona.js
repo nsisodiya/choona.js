@@ -13,10 +13,10 @@
 
 var choona = {};
 
-choona.klass = (function () {
+choona.klass = (function() {
   "use strict";
-  var klass = function (ChildProto) {
-    var Child = function () {
+  var klass = function(ChildProto) {
+    var Child = function() {
       if (typeof ChildProto.initialize === "function") {
         ChildProto.initialize.apply(this, arguments);
       }
@@ -41,10 +41,10 @@ choona.klass = (function () {
     return Child;
   };
 
-  klass.Singleton = function (CLASS_OBJ) {
+  klass.Singleton = function(CLASS_OBJ) {
     var CLASS = klass(CLASS_OBJ);
     var singleObj = new CLASS();
-    return function () {
+    return function() {
       return singleObj;
     };
   };
@@ -87,16 +87,16 @@ choona.Base = choona.klass({});
  * @author Narendra Sisodiya
  */
 
-(function () {
+(function() {
   "use strict";
   choona.Settings = {
-    preStart: function () {
+    preStart: function() {
 
     },
-    postEnd: function () {
+    postEnd: function() {
 
     },
-    postTemplateProcessing: function (str) {
+    postTemplateProcessing: function(str) {
       return str;
     },
     debug: false,
@@ -116,17 +116,17 @@ choona.Base = choona.klass({});
  *
  **/
 
-(function () {
+(function() {
   "use strict";
 
-// Caches a local reference to `Element.prototype` for faster access.
+  // Caches a local reference to `Element.prototype` for faster access.
   var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
 
   // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function (eventName, listener) {
+  var elementAddEventListener = ElementProto.addEventListener || function(eventName, listener) {
     return this.attachEvent("on" + eventName, listener);
   };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function (eventName, listener) {
+  var elementRemoveEventListener = ElementProto.removeEventListener || function(eventName, listener) {
     return this.detachEvent("on" + eventName, listener);
   };
   ElementProto.matchesSelector =
@@ -142,37 +142,40 @@ choona.Base = choona.klass({});
   choona.Util = {
     //@msg - Message to be logged
     //@param: {String} msg - message to be logged
-    log: function (msg) {
+    log: function(msg) {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
         console.log(msg);
       }
     },
     //@msg - Error Message to be logged
     //choona.Util.logError(), can be used to log error messages to console.
-    logError: function (msg) {
+    logError: function(msg) {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
         console.error(msg);
       }
     },
-    bindEvent: function (ele, eventName, callback) {
+    bindEvent: function(ele, eventName, callback) {
       elementAddEventListener.call(ele, eventName, callback, false);
     },
-    unbindEvent: function (ele, eventName, callback) {
+    unbindEvent: function(ele, eventName, callback) {
       elementRemoveEventListener.call(ele, eventName, callback);
     },
     //Replacement for _.each over Objects
-    for: function (Obj, callback) {
+    for: function(Obj, callback) {
       for (var i in Obj) {
         if (Obj.hasOwnProperty(i)) {
           callback(Obj[i], i);
         }
       }
+    },
+    loadHTML: function(ele, str) {
+      ele.innerHTML = str;
+      //TODO - find any submodule
+      //This function can be transferred to choona.View
     }
   };
 
 })();
-
-
 ;/**
  * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
  *
@@ -187,19 +190,19 @@ choona.Base = choona.klass({});
  * @author Narendra Sisodiya
  */
 
-(function () {
+(function() {
   "use strict";
   choona.EventBus = choona.Base.extend({
-    initialize: function () {
+    initialize: function() {
       this._NewsPaperList = {};
       this._OrderList = [];
     },
     //New Syntax
-    on: function () {
+    on: function() {
       return this.subscribe.apply(this, arguments);
     },
     //Old Syntax
-    subscribe: function (newsPaper, address) {
+    subscribe: function(newsPaper, address) {
       if ((typeof newsPaper !== "string") || (typeof address !== "function")) {
         return -1;
       }
@@ -216,22 +219,22 @@ choona.Base = choona.klass({});
       }) - 1;
     },
     //New Syntax
-    off: function () {
+    off: function() {
       return this.unsubscribe.apply(this, arguments);
     },
     //Old Syntax
-    unsubscribe: function (orderId) {
+    unsubscribe: function(orderId) {
       var O = this._OrderList[orderId];
       if (O !== undefined) {
         delete this._NewsPaperList[O.newsPaper][O.customer];
       }
     },
     //New Syntax
-    trigger: function () {
+    trigger: function() {
       this.publish.apply(this, arguments);
     },
     //old Syntax
-    publish: function () {
+    publish: function() {
       var Arr = Array.prototype.slice.call(arguments);
       var newsPaper = Arr.slice(0, 1)[0];
       Arr.shift();
@@ -263,13 +266,13 @@ choona.Base = choona.klass({});
  */
 
 
-(function () {
+(function() {
   "use strict";
   choona.Model = choona.EventBus.extend({
-    initialize: function () {
+    initialize: function() {
       choona.EventBus.call(this);
     },
-    publishModalChanges: function () {
+    publishModalChanges: function() {
       this.publish("change");
     }
   });
@@ -288,15 +291,16 @@ choona.Base = choona.klass({});
  * @author Narendra Sisodiya
  */
 
-(function () {
+(function() {
   "use strict";
 
   //TODO - you can rename this to choona.View and all views will be extended from this
   //TODO - like choona.view.extend(...)
 
+
   var log = choona.Util.log;
-  choona.BaseModule = choona.Base.extend({
-    initialize: function (id, domEle, config, parentEventBus) {
+  choona.View = choona.Base.extend({
+    initialize: function(id, domEle, config, parentEventBus) {
       choona.Base.call(this);
 
       var self = this;
@@ -304,10 +308,10 @@ choona.Base = choona.klass({});
       this.config = config;
 
       this._sandBoxData = {
-        eventBus : parentEventBus,
-        topicList : {},
-        subModuleList : {},
-        id : id,
+        eventBus: parentEventBus,
+        topicList: {},
+        subModuleList: {},
+        id: id,
         domEvents: []
       };
 
@@ -340,7 +344,7 @@ choona.Base = choona.klass({});
       //subscribeAll SandboxEvents();
 
       if (this.sandboxEvents !== undefined) {
-        choona.Util.for(this.sandboxEvents, function (methodName, eventName) {
+        choona.Util.for(this.sandboxEvents, function(methodName, eventName) {
           self.subscribeSandboxEvent(eventName, methodName);
         });
       }
@@ -365,12 +369,12 @@ choona.Base = choona.klass({});
         throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
       }
     },
-    _getEventBus: function () {
+    _getEventBus: function() {
       return this._sandBoxData.eventBus;
     },
-    subscribeSandboxEvent: function (topic, methodName) {
+    subscribeSandboxEvent: function(topic, methodName) {
       var self = this;
-      var callback = function () {
+      var callback = function() {
         self[methodName].apply(self, arguments);
       };
       if (this._sandBoxData.topicList[topic] === undefined) {
@@ -380,22 +384,22 @@ choona.Base = choona.klass({});
       this._sandBoxData.topicList[topic].push(bus.subscribe(topic, callback));
       log("subscribed topic -> " + topic);
     },
-    unSubscribeSandboxEvent: function (topic) {
+    unSubscribeSandboxEvent: function(topic) {
       log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
       if (this._sandBoxData.topicList[topic] !== undefined) {
-        this._sandBoxData.topicList[topic].map(function (v, i) {
+        this._sandBoxData.topicList[topic].map(function(v, i) {
           bus.unsubscribe(v);
         });
         delete this._sandBoxData.topicList[topic];
       }
     },
-    publishSandboxEvent: function (topic, val) {
+    publishSandboxEvent: function(topic, val) {
       log("publishing topic ->" + topic + " = " + val);
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
-    startSubModule: function (data) {
+    startSubModule: function(data) {
       //TODO - user should be able to load submodule without id
       if (typeof data.id !== "string" || data.id === "") {
         throw new Error("Id provided is not String or it is a blank sting");
@@ -410,45 +414,48 @@ choona.Base = choona.klass({});
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
       }
     },
-    endSubModule: function (id) {
-      if(this._sandBoxData.subModuleList[id] !== undefined){
+    endSubModule: function(id) {
+      if (this._sandBoxData.subModuleList[id] !== undefined) {
         this._sandBoxData.subModuleList[id].endApplication();
         delete this._sandBoxData.subModuleList[id];
       }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
-    on: function (obj) {
+    on: function(obj) {
       //We use {"eventName hash":"handler"} kind of notation !
       var self = this;
-      choona.Util.for(obj, function (handler, key) {
-        key = key.trim().replace(/ +/g," ");
+      choona.Util.for(obj, function(handler, key) {
+        key = key.trim().replace(/ +/g, " ");
 
         var arr = key.split(" ");
         var eventName = arr.shift();
         var hash = arr.join(" ");
 
-        var callback = function (e) {
+        var callback = function(e) {
           if (hash === "") {
             self[handler].call(self, e, e.target);
-          }else{
+          } else {
             if (e.target.matches(hash)) {
               self[handler].call(self, e, e.target);
             }
           }
         };
         choona.Util.bindEvent(self.$, eventName, callback);
-        self._sandBoxData.domEvents[key] = {eventName:eventName, callback:callback };
+        self._sandBoxData.domEvents[key] = {
+          eventName: eventName,
+          callback: callback
+        };
       });
     },
-    off: function (key) {
+    off: function(key) {
       //Unsubscribe dom event
       var v = this._sandBoxData.domEvents[key];
-      if(v !== undefined && typeof v === "object"){
+      if (v !== undefined && typeof v === "object") {
         choona.Util.unbindEvent(this.$, v.eventName, v.callback);
         delete this._sandBoxData.domEvents[key];
       }
     },
-    _endModuleResources: function () {
+    _endModuleResources: function() {
 
       //call postEnd();
       if (typeof choona.Settings.postEnd === "function") {
@@ -458,7 +465,7 @@ choona.Base = choona.klass({});
 
       //endAllSubModules
       var self = this;
-      choona.Util.for(this._sandBoxData.subModuleList, function (v,id) {
+      choona.Util.for(this._sandBoxData.subModuleList, function(v, id) {
         self.endSubModule(id);
       });
 
@@ -467,7 +474,7 @@ choona.Base = choona.klass({});
       }
 
       //unSubscribing All DOM events
-      this._sandBoxData.domEvents.map(function (v,key) {
+      this._sandBoxData.domEvents.map(function(v, key) {
         self.off(key);
       });
 
@@ -475,7 +482,7 @@ choona.Base = choona.klass({});
       this.$.innerHTML = "";
 
       //unSubscribe All SandboxEvents
-      choona.Util.for(this._sandBoxData.topicList, function (v,topic) {
+      choona.Util.for(this._sandBoxData.topicList, function(v, topic) {
         self.unSubscribeSandboxEvent(topic);
       });
 
@@ -513,7 +520,7 @@ choona.Base = choona.klass({});
 
 
 
-(function () {
+(function() {
   "use strict";
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
@@ -521,7 +528,7 @@ choona.Base = choona.klass({});
   //TODO - We can remove this, choona.View is sufficient !
 
   choona.Application = choona.Base.extend({
-    initialize: function (moduleConf, subModuleConf) {
+    initialize: function(moduleConf, subModuleConf) {
       choona.Application.parent.call(this);
 
       var id = moduleConf.id,
@@ -551,22 +558,25 @@ choona.Base = choona.klass({});
          var x = Object.create(protoObjModule);
          x.initialize = function(){
          }
-         var ModuleConstructor = choona.BaseModule.extend(x);
+         var ModuleConstructor = choona.View.extend(x);
       *
       * */
-      protoObjModule.initialize = function () {
-        choona.BaseModule.apply(this, arguments);
-      };
+
+      if (typeof protoObjModule.initialize !== "function") {
+        protoObjModule.initialize = function() {
+          choona.View.apply(this, arguments);
+        };
+      }
 
       //TODO -=
-       /*     Object.create( choona.BaseModule --> protoObjModule   -->
-      *
-      * */
-      var ModuleConstructor = choona.BaseModule.extend(protoObjModule);
+      /*     Object.create( choona.View --> protoObjModule   -->
+       *
+       * */
+      var ModuleConstructor = choona.View.extend(protoObjModule);
       this.module = new ModuleConstructor(id, domEle, config, parentEventBus);
 
     },
-    endApplication: function () {
+    endApplication: function() {
       this.module._endModuleResources();
       delete this.module;
     }
@@ -578,21 +588,21 @@ choona.Base = choona.klass({});
 
 //TODO replace module with widget or component, So that people will not confuse that this is not a requirejs thing..
 
-(function () {
+(function() {
   "use strict";
   choona.Router = {
 
     template: "<router id='router'></router>",
-    start: function () {
+    start: function() {
       this.router = [];
       var self = this;
-      choona.Util.for(this.config.routes, function (module, path) {
+      choona.Util.for(this.config.routes, function(module, path) {
         self.router.push({
-          path : path,
-          callback: function () {
+          path: path,
+          callback: function() {
             self.endSubModule("router");
             self.startSubModule({
-              id:"router",
+              id: "router",
               module: module
             });
           }
@@ -605,23 +615,23 @@ choona.Base = choona.klass({});
       //TODO OR you want to hide module !
 
 
-      choona.Util.bindEvent(document, "click", function (e) {
+      choona.Util.bindEvent(document, "click", function(e) {
         var path = e.target.getAttribute("href");
         var x = self.loadPath(path, false);
-        if(x === false){
+        if (x === false) {
           e.stopPropagation();
           e.stopImmediatePropagation();
           e.preventDefault();
         }
       });
 
-      choona.Util.bindEvent(window, "popstate", function (e) {
+      choona.Util.bindEvent(window, "popstate", function(e) {
         var path = document.location.pathname;
         self.loadPath(path, true);
       });
 
     },
-    loadPath : function (path, back) {
+    loadPath: function(path, back) {
 
       //TODO Router API in sandbox
       //https://github.com/PaulKinlan/leviroutes/blob/master/routes.js
@@ -633,10 +643,10 @@ choona.Base = choona.klass({});
       //TODO - we need to add test cases !!
 
       var pathMatched = false;
-      this.router.map(function (v,i) {
-        if(v.path === path){
+      this.router.map(function(v, i) {
+        if (v.path === path) {
           pathMatched = true;
-          if(back === false){
+          if (back === false) {
             history.pushState({}, "", path);
           }
           v.callback();
@@ -644,9 +654,8 @@ choona.Base = choona.klass({});
       });
       return !pathMatched;
     },
-    end : {
+    end: {
 
     }
   };
 })();
-

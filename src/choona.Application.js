@@ -14,7 +14,7 @@
 
 
 
-(function () {
+(function() {
   "use strict";
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
@@ -22,7 +22,7 @@
   //TODO - We can remove this, choona.View is sufficient !
 
   choona.Application = choona.Base.extend({
-    initialize: function (moduleConf, subModuleConf) {
+    initialize: function(moduleConf, subModuleConf) {
       choona.Application.parent.call(this);
 
       var id = moduleConf.id,
@@ -52,22 +52,25 @@
          var x = Object.create(protoObjModule);
          x.initialize = function(){
          }
-         var ModuleConstructor = choona.BaseModule.extend(x);
+         var ModuleConstructor = choona.View.extend(x);
       *
       * */
-      protoObjModule.initialize = function () {
-        choona.BaseModule.apply(this, arguments);
-      };
+
+      if (typeof protoObjModule.initialize !== "function") {
+        protoObjModule.initialize = function() {
+          choona.View.apply(this, arguments);
+        };
+      }
 
       //TODO -=
-       /*     Object.create( choona.BaseModule --> protoObjModule   -->
-      *
-      * */
-      var ModuleConstructor = choona.BaseModule.extend(protoObjModule);
+      /*     Object.create( choona.View --> protoObjModule   -->
+       *
+       * */
+      var ModuleConstructor = choona.View.extend(protoObjModule);
       this.module = new ModuleConstructor(id, domEle, config, parentEventBus);
 
     },
-    endApplication: function () {
+    endApplication: function() {
       this.module._endModuleResources();
       delete this.module;
     }

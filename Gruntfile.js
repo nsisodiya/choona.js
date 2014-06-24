@@ -10,7 +10,7 @@ module.exports = function(grunt) {
     "src/choona.Util.js",
     "src/choona.EventBus.js",
     "src/choona.Model.js",
-    "src/choona.BaseModule.js",
+    "src/choona.View.js",
     "src/choona.Application.js",
     "src/choona.Router.js"
   ];
