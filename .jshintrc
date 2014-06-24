@@ -23,7 +23,9 @@
 		"document":true,
     "choona": true,
     "jQuery": true,
-    "Element": true
+    "Element": true,
+    "history": true,
+    "window": true
 	}
 }
 
