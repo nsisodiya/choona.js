@@ -40,7 +40,7 @@
 
   choona.BaseModule = choona.Base.extend({
     initialize: function (id, domEle, config, parentEventBus) {
-      choona.Base.parent.call(this);
+      choona.Base.call(this);
 
       var self = this;
       this.$ = domEle;
@@ -154,8 +154,10 @@
       }
     },
     endSubModule: function (id) {
-      this._sandBoxData.subModuleList[id].endApplication();
-      delete this._sandBoxData.subModuleList[id];
+      if(this._sandBoxData.subModuleList[id] !== undefined){
+        this._sandBoxData.subModuleList[id].endApplication();
+        delete this._sandBoxData.subModuleList[id];
+      }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
     on: function (obj) {

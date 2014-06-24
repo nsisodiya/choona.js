@@ -1,74 +1,41 @@
 (function () {
   "use strict";
 
-  App.todoModule = {
-    template : "todoModule/todoModule.html",
-    sandboxEvents: {
 
-    },
-    domEvents:{
-      "click .toggle"   : "toggleDone",
-      "dblclick .view"  : "edit",
-      "click a.destroy" : "clear",
-      "keyup .edit"  : "updateOnEnter",
-      "blur .edit"      : "close",
-
-      "keyup #new-todo":  "createOnEnter",
-      "click #clear-completed": "clearCompleted",
-      "click #toggle-all": "toggleAllComplete"
-    },
-    edit: function (e, ele) {
-      $(ele).closest('li').addClass("editing");
-    },
-    updateOnEnter: function (e, ele) {
-      if(e.keyCode === 13){
-       this.model.update( $(ele).val(), $(ele).closest("li").data("index"));
-      }
-    },
-    close: function (e, ele) {
-      $(ele).closest('li').removeClass("editing");
-    },
-    toggleAllComplete: function (e, ele) {
-
-      if(ele.checked){
-        this.model.markAllComplete();
-      }else{
-        this.model.markAllUnfinished();
-      }
-    },
+  App.BlogModule = {
+    template:"This is blog Module",
     start: function () {
-      var self = this;
-      $.get("todoModule/todoModuleMainTemplate.html").done(function (data) {
-        self.todoModuleMainTemplate = data;
-        self.renderMainTemplate();
-      });
-      this.model = new App.todoDataKlass();
-      this.model.on("change", function () {
-        self.renderMainTemplate();
-      });
-
-    },
-    createOnEnter: function (e) {
-      if(e.keyCode === 13){
-        this.model.addNewTodo(e.target.value);
-        e.target.value = "";
-      }
-    },
-    toggleDone: function (e, ele) {
-      this.model.toggle($(ele).closest("li").data("index"));
-    },
-
-    clearCompleted: function (e, ele) {
-      this.model.deleteCompleted();
-    },
-    renderMainTemplate: function () {
-      console.log("Render");
-      this.$$.find("#mainTempalte").html(_.template(this.todoModuleMainTemplate, this.model));
-    },
-    end: function () {
 
     }
-
   };
+
+  App.SettingModule = {
+    template:"This is Settings Module",
+    start: function () {
+
+
+
+    }
+  };
+
+
+  App.main = {
+    template:"<a href='/dash'>/dashboard</a><br/><a href='/blog'>/blog</a><br/><a href='/settings'>/settings</a><div id='mainModule'></div>",
+    start: function () {
+      var self = this;
+      this.startSubModule({
+        id:"mainModule",
+        module: choona.Router,
+        config : {
+          routes: {
+            "/blog": App.BlogModule,
+            "/settings": App.SettingModule
+          }
+        }
+      });
+    }
+  };
+
+
 })();
 

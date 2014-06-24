@@ -11,7 +11,8 @@ module.exports = function(grunt) {
     "src/choona.EventBus.js",
     "src/choona.Model.js",
     "src/choona.BaseModule.js",
-    "src/choona.Application.js"
+    "src/choona.Application.js",
+    "src/choona.Router.js"
   ];
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
