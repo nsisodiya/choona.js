@@ -15,29 +15,10 @@
 (function () {
   "use strict";
 
+  //TODO - you can rename this to choona.View and all views will be extended from this
+  //TODO - like choona.view.extend(...)
 
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
-
-  // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function (eventName, listener) {
-    return this.attachEvent("on" + eventName, listener);
-  };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function (eventName, listener) {
-    return this.detachEvent("on" + eventName, listener);
-  };
-  ElementProto.matchesSelector =
-    ElementProto.matches ||
-    ElementProto.webkitMatchesSelector ||
-    ElementProto.mozMatchesSelector ||
-    ElementProto.msMatchesSelector;
-
-  if (!ElementProto.matches) {
-    ElementProto.matches = ElementProto.matchesSelector;
-  }
   var log = choona.Util.log;
-
-
   choona.BaseModule = choona.Base.extend({
     initialize: function (id, domEle, config, parentEventBus) {
       choona.Base.call(this);
@@ -179,7 +160,7 @@
             }
           }
         };
-        elementAddEventListener.call(self.$, eventName, callback, false);
+        choona.Util.bindEvent(self.$, eventName, callback);
         self._sandBoxData.domEvents[key] = {eventName:eventName, callback:callback };
       });
     },
@@ -187,7 +168,8 @@
       //Unsubscribe dom event
       var v = this._sandBoxData.domEvents[key];
       if(v !== undefined && typeof v === "object"){
-        elementRemoveEventListener.call(this.$, v.eventName, v.callback);
+        choona.Util.unbindEvent(this.$, v.eventName, v.callback);
+        delete this._sandBoxData.domEvents[key];
       }
     },
     _endModuleResources: function () {

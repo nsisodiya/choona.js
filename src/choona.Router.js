@@ -24,21 +24,28 @@
           }
         });
       });
-      //TODO remove $
+
       //TODO unbind these callback when you end router !!
 
       //TODO - there should be mode for speficify that we want to load all modules on same place with ending previous module
       //TODO OR you want to hide module !
 
-      $(document).on("click", function (e) {
+
+      choona.Util.bindEvent(document, "click", function (e) {
         var path = e.target.getAttribute("href");
-        return self.loadPath(path, false);
+        var x = self.loadPath(path, false);
+        if(x === false){
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
       });
 
-      $(window).on("popstate", function (e) {
+      choona.Util.bindEvent(window, "popstate", function (e) {
         var path = document.location.pathname;
         self.loadPath(path, true);
       });
+
     },
     loadPath : function (path, back) {
 
@@ -48,6 +55,8 @@
       // https://github.com/haithembelhaj/RouterJs/blob/master/Router.js
       //https://github.com/flatiron/director/blob/master/lib/director/browser.js
       //todo TODOAPP USING CHOONA.rOUTER
+
+      //TODO - we need to add test cases !!
 
       var pathMatched = false;
       this.router.map(function (v,i) {

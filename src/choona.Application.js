@@ -18,6 +18,9 @@
   "use strict";
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
+  //TODO - this should be renamed as choona.ViewLoader
+  //TODO - We can remove this, choona.View is sufficient !
+
   choona.Application = choona.Base.extend({
     initialize: function (moduleConf, subModuleConf) {
       choona.Application.parent.call(this);
@@ -55,6 +58,11 @@
       protoObjModule.initialize = function () {
         choona.BaseModule.apply(this, arguments);
       };
+
+      //TODO -=
+       /*     Object.create( choona.BaseModule --> protoObjModule   -->
+      *
+      * */
       var ModuleConstructor = choona.BaseModule.extend(protoObjModule);
       this.module = new ModuleConstructor(id, domEle, config, parentEventBus);
 

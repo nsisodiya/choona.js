@@ -118,6 +118,27 @@ choona.Base = choona.klass({});
 
 (function () {
   "use strict";
+
+// Caches a local reference to `Element.prototype` for faster access.
+  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
+
+  // Cross-browser event listener shims
+  var elementAddEventListener = ElementProto.addEventListener || function (eventName, listener) {
+    return this.attachEvent("on" + eventName, listener);
+  };
+  var elementRemoveEventListener = ElementProto.removeEventListener || function (eventName, listener) {
+    return this.detachEvent("on" + eventName, listener);
+  };
+  ElementProto.matchesSelector =
+    ElementProto.matches ||
+    ElementProto.webkitMatchesSelector ||
+    ElementProto.mozMatchesSelector ||
+    ElementProto.msMatchesSelector;
+
+  if (!ElementProto.matches) {
+    ElementProto.matches = ElementProto.matchesSelector;
+  }
+
   choona.Util = {
     //@msg - Message to be logged
     //@param: {String} msg - message to be logged
@@ -132,6 +153,12 @@ choona.Base = choona.klass({});
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
         console.error(msg);
       }
+    },
+    bindEvent: function (ele, eventName, callback) {
+      elementAddEventListener.call(ele, eventName, callback, false);
+    },
+    unbindEvent: function (ele, eventName, callback) {
+      elementRemoveEventListener.call(ele, eventName, callback);
     },
     //Replacement for _.each over Objects
     for: function (Obj, callback) {
@@ -264,29 +291,10 @@ choona.Base = choona.klass({});
 (function () {
   "use strict";
 
+  //TODO - you can rename this to choona.View and all views will be extended from this
+  //TODO - like choona.view.extend(...)
 
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
-
-  // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function (eventName, listener) {
-    return this.attachEvent("on" + eventName, listener);
-  };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function (eventName, listener) {
-    return this.detachEvent("on" + eventName, listener);
-  };
-  ElementProto.matchesSelector =
-    ElementProto.matches ||
-    ElementProto.webkitMatchesSelector ||
-    ElementProto.mozMatchesSelector ||
-    ElementProto.msMatchesSelector;
-
-  if (!ElementProto.matches) {
-    ElementProto.matches = ElementProto.matchesSelector;
-  }
   var log = choona.Util.log;
-
-
   choona.BaseModule = choona.Base.extend({
     initialize: function (id, domEle, config, parentEventBus) {
       choona.Base.call(this);
@@ -428,7 +436,7 @@ choona.Base = choona.klass({});
             }
           }
         };
-        elementAddEventListener.call(self.$, eventName, callback, false);
+        choona.Util.bindEvent(self.$, eventName, callback);
         self._sandBoxData.domEvents[key] = {eventName:eventName, callback:callback };
       });
     },
@@ -436,7 +444,8 @@ choona.Base = choona.klass({});
       //Unsubscribe dom event
       var v = this._sandBoxData.domEvents[key];
       if(v !== undefined && typeof v === "object"){
-        elementRemoveEventListener.call(this.$, v.eventName, v.callback);
+        choona.Util.unbindEvent(this.$, v.eventName, v.callback);
+        delete this._sandBoxData.domEvents[key];
       }
     },
     _endModuleResources: function () {
@@ -508,6 +517,9 @@ choona.Base = choona.klass({});
   "use strict";
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
+  //TODO - this should be renamed as choona.ViewLoader
+  //TODO - We can remove this, choona.View is sufficient !
+
   choona.Application = choona.Base.extend({
     initialize: function (moduleConf, subModuleConf) {
       choona.Application.parent.call(this);
@@ -545,6 +557,11 @@ choona.Base = choona.klass({});
       protoObjModule.initialize = function () {
         choona.BaseModule.apply(this, arguments);
       };
+
+      //TODO -=
+       /*     Object.create( choona.BaseModule --> protoObjModule   -->
+      *
+      * */
       var ModuleConstructor = choona.BaseModule.extend(protoObjModule);
       this.module = new ModuleConstructor(id, domEle, config, parentEventBus);
 
@@ -581,21 +598,28 @@ choona.Base = choona.klass({});
           }
         });
       });
-      //TODO remove $
+
       //TODO unbind these callback when you end router !!
 
       //TODO - there should be mode for speficify that we want to load all modules on same place with ending previous module
       //TODO OR you want to hide module !
 
-      $(document).on("click", function (e) {
+
+      choona.Util.bindEvent(document, "click", function (e) {
         var path = e.target.getAttribute("href");
-        return self.loadPath(path, false);
+        var x = self.loadPath(path, false);
+        if(x === false){
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          e.preventDefault();
+        }
       });
 
-      $(window).on("popstate", function (e) {
+      choona.Util.bindEvent(window, "popstate", function (e) {
         var path = document.location.pathname;
         self.loadPath(path, true);
       });
+
     },
     loadPath : function (path, back) {
 
@@ -605,6 +629,8 @@ choona.Base = choona.klass({});
       // https://github.com/haithembelhaj/RouterJs/blob/master/Router.js
       //https://github.com/flatiron/director/blob/master/lib/director/browser.js
       //todo TODOAPP USING CHOONA.rOUTER
+
+      //TODO - we need to add test cases !!
 
       var pathMatched = false;
       this.router.map(function (v,i) {
