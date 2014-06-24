@@ -19,6 +19,8 @@
   //TODO - like choona.view.extend(...)
 
 
+  choona.Settings.GlobalEventBus = new choona.EventBus();
+
   var log = choona.Util.log;
   choona.View = choona.Base.extend({
     initialize: function(moduleConf, subModuleConf) {
@@ -142,17 +144,24 @@
 
       if (this._sandBoxData.subModuleList[data.id] === undefined) {
         //You cannot load more than 1 module at given Id.
-        this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
+
+        //        this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
+        //          parentNode: this.$,
+        //          parentEventBus: this._getEventBus()
+        //        });
+
+        this._sandBoxData.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus()
         });
+
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
       }
     },
     endSubModule: function(id) {
       if (this._sandBoxData.subModuleList[id] !== undefined) {
-        this._sandBoxData.subModuleList[id].endApplication();
+        this._sandBoxData.subModuleList[id]._endModuleResources();
         delete this._sandBoxData.subModuleList[id];
       }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.

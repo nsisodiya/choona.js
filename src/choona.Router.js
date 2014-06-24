@@ -6,8 +6,10 @@
 
 (function() {
   "use strict";
-  choona.Router = {
-
+  choona.Router = choona.View.extend({
+    initialize: function() {
+      choona.View.apply(this, arguments);
+    },
     template: "<router id='router'></router>",
     start: function() {
       this.router = [];
@@ -73,5 +75,5 @@
     end: {
 
     }
-  };
+  });
 })();

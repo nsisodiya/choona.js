@@ -298,6 +298,8 @@ choona.Base = choona.klass({});
   //TODO - like choona.view.extend(...)
 
 
+  choona.Settings.GlobalEventBus = new choona.EventBus();
+
   var log = choona.Util.log;
   choona.View = choona.Base.extend({
     initialize: function(moduleConf, subModuleConf) {
@@ -421,17 +423,24 @@ choona.Base = choona.klass({});
 
       if (this._sandBoxData.subModuleList[data.id] === undefined) {
         //You cannot load more than 1 module at given Id.
-        this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
+
+        //        this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
+        //          parentNode: this.$,
+        //          parentEventBus: this._getEventBus()
+        //        });
+
+        this._sandBoxData.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus()
         });
+
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
       }
     },
     endSubModule: function(id) {
       if (this._sandBoxData.subModuleList[id] !== undefined) {
-        this._sandBoxData.subModuleList[id].endApplication();
+        this._sandBoxData.subModuleList[id]._endModuleResources();
         delete this._sandBoxData.subModuleList[id];
       }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
@@ -519,64 +528,6 @@ choona.Base = choona.klass({});
 
 
 })();
-;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.Application
- * JavaScript pub/sub design pattern, It will be used for communication between different widgets and modules.
- *
- * @author Narendra Sisodiya
- */
-
-//TODO - this should be renamed as choona.ViewLoader
-//TODO - We can remove this, choona.View is sufficient !
-//TODO - you are assigning initialize to protoObj , If you load module again and again, this will be overwritten
-/* possible solution -
- var x = Object.create(protoObjModule);
- x.initialize = function(){
- }
- var ModuleConstructor = choona.View.extend(x);
- *
- * */
-
-//TODO -=
-/*     Object.create( choona.View --> protoObjModule   -->
- *
- * */
-
-
-
-(function() {
-  "use strict";
-  choona.Settings.GlobalEventBus = new choona.EventBus();
-  choona.Application = choona.Base.extend({
-    initialize: function(moduleConf, subModuleConf) {
-      choona.Base.call(this);
-
-      var protoObjModule = moduleConf.module;
-
-      if (protoObjModule === undefined && typeof protoObjModule !== "object") {
-        throw new Error("moduleConf.module is undefined or not an object for moduleConf.id = " + this.id);
-      }
-      if (typeof protoObjModule.initialize !== "function") {
-        protoObjModule.initialize = function() {
-          choona.View.apply(this, arguments);
-        };
-      }
-      var ModuleConstructor = choona.View.extend(protoObjModule);
-      this.module = new ModuleConstructor(moduleConf, subModuleConf);
-    },
-    endApplication: function() {
-      this.module._endModuleResources();
-      delete this.module;
-    }
-  });
-})();
 ;//Choona.Router
 
 // this is just a module !!
@@ -585,8 +536,10 @@ choona.Base = choona.klass({});
 
 (function() {
   "use strict";
-  choona.Router = {
-
+  choona.Router = choona.View.extend({
+    initialize: function() {
+      choona.View.apply(this, arguments);
+    },
     template: "<router id='router'></router>",
     start: function() {
       this.router = [];
@@ -652,5 +605,5 @@ choona.Base = choona.klass({});
     end: {
 
     }
-  };
+  });
 })();

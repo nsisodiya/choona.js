@@ -11,7 +11,6 @@ module.exports = function(grunt) {
     "src/choona.EventBus.js",
     "src/choona.Model.js",
     "src/choona.View.js",
-    "src/choona.Application.js",
     "src/choona.Router.js"
   ];
   grunt.initConfig({
