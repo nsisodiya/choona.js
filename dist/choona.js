@@ -300,20 +300,32 @@ choona.Base = choona.klass({});
 
   var log = choona.Util.log;
   choona.View = choona.Base.extend({
-    initialize: function(id, domEle, config, parentEventBus) {
+    initialize: function(moduleConf, subModuleConf) {
       choona.Base.call(this);
 
-      var self = this;
-      this.$ = domEle;
-      this.config = config;
-
+      this.config = moduleConf.config;
       this._sandBoxData = {
-        eventBus: parentEventBus,
+        eventBus: choona.Settings.GlobalEventBus,
         topicList: {},
         subModuleList: {},
-        id: id,
+        id: moduleConf.id,
         domEvents: []
       };
+
+      if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
+        throw new Error("Id provided is not String or it is a blank sting");
+      }
+
+      if (subModuleConf !== undefined) {
+        this._sandBoxData.eventBus = subModuleConf.parentEventBus;
+        this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
+      } else {
+        this.$ = document.querySelector("#" + moduleConf.id);
+      }
+
+      if (this.$ === null) {
+        throw new Error("Unable to Load Module, as I am unable to find id=\"" + moduleConf.id + "\" inside Root DOM");
+      }
 
       //setup this.$el & this.$$ if jQuery present.
       if (jQuery) {
@@ -342,6 +354,7 @@ choona.Base = choona.klass({});
       }
 
       //subscribeAll SandboxEvents();
+      var self = this;
 
       if (this.sandboxEvents !== undefined) {
         choona.Util.for(this.sandboxEvents, function(methodName, eventName) {
@@ -366,8 +379,12 @@ choona.Base = choona.klass({});
         log("started module -> " + this._sandBoxData.id);
       } else {
         //TODO - move all these message to common place !
+        //TODO - do we need to show error ?
         throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
       }
+    },
+    start: function() {
+      //This will be override by User !
     },
     _getEventBus: function() {
       return this._sandBoxData.eventBus;
@@ -401,9 +418,7 @@ choona.Base = choona.klass({});
     },
     startSubModule: function(data) {
       //TODO - user should be able to load submodule without id
-      if (typeof data.id !== "string" || data.id === "") {
-        throw new Error("Id provided is not String or it is a blank sting");
-      }
+
       if (this._sandBoxData.subModuleList[data.id] === undefined) {
         //You cannot load more than 1 module at given Id.
         this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
@@ -518,63 +533,43 @@ choona.Base = choona.klass({});
  * @author Narendra Sisodiya
  */
 
+//TODO - this should be renamed as choona.ViewLoader
+//TODO - We can remove this, choona.View is sufficient !
+//TODO - you are assigning initialize to protoObj , If you load module again and again, this will be overwritten
+/* possible solution -
+ var x = Object.create(protoObjModule);
+ x.initialize = function(){
+ }
+ var ModuleConstructor = choona.View.extend(x);
+ *
+ * */
+
+//TODO -=
+/*     Object.create( choona.View --> protoObjModule   -->
+ *
+ * */
+
 
 
 (function() {
   "use strict";
   choona.Settings.GlobalEventBus = new choona.EventBus();
-
-  //TODO - this should be renamed as choona.ViewLoader
-  //TODO - We can remove this, choona.View is sufficient !
-
   choona.Application = choona.Base.extend({
     initialize: function(moduleConf, subModuleConf) {
       choona.Application.parent.call(this);
 
-      var id = moduleConf.id,
-        protoObjModule = moduleConf.module,
-        config = moduleConf.config,
-        domEle, parentEventBus;
+      var protoObjModule = moduleConf.module;
 
-      if (subModuleConf !== undefined) {
-        parentEventBus = subModuleConf.parentEventBus;
-        domEle = subModuleConf.parentNode.querySelector("#" + id);
-      } else {
-        parentEventBus = choona.Settings.GlobalEventBus;
-        domEle = document.querySelector("#" + id);
-      }
-
-      if (typeof id !== "string" || id === "") {
-        throw new Error("Id provided is not String or it is a blank sting");
-      }
-      if (domEle === null) {
-        throw new Error("Unable to Load Module, as I am unable to find id=\"" + this.id + "\" inside Root DOM");
-      }
       if (protoObjModule === undefined && typeof protoObjModule !== "object") {
         throw new Error("moduleConf.module is undefined or not an object for moduleConf.id = " + this.id);
       }
-      //TODO - you are assigning initialize to protoObj , If you load module again and again, this will be overwritten
-      /* possible solution -
-         var x = Object.create(protoObjModule);
-         x.initialize = function(){
-         }
-         var ModuleConstructor = choona.View.extend(x);
-      *
-      * */
-
       if (typeof protoObjModule.initialize !== "function") {
         protoObjModule.initialize = function() {
           choona.View.apply(this, arguments);
         };
       }
-
-      //TODO -=
-      /*     Object.create( choona.View --> protoObjModule   -->
-       *
-       * */
       var ModuleConstructor = choona.View.extend(protoObjModule);
-      this.module = new ModuleConstructor(id, domEle, config, parentEventBus);
-
+      this.module = new ModuleConstructor(moduleConf, subModuleConf);
     },
     endApplication: function() {
       this.module._endModuleResources();

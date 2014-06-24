@@ -21,20 +21,32 @@
 
   var log = choona.Util.log;
   choona.View = choona.Base.extend({
-    initialize: function(id, domEle, config, parentEventBus) {
+    initialize: function(moduleConf, subModuleConf) {
       choona.Base.call(this);
 
-      var self = this;
-      this.$ = domEle;
-      this.config = config;
-
+      this.config = moduleConf.config;
       this._sandBoxData = {
-        eventBus: parentEventBus,
+        eventBus: choona.Settings.GlobalEventBus,
         topicList: {},
         subModuleList: {},
-        id: id,
+        id: moduleConf.id,
         domEvents: []
       };
+
+      if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
+        throw new Error("Id provided is not String or it is a blank sting");
+      }
+
+      if (subModuleConf !== undefined) {
+        this._sandBoxData.eventBus = subModuleConf.parentEventBus;
+        this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
+      } else {
+        this.$ = document.querySelector("#" + moduleConf.id);
+      }
+
+      if (this.$ === null) {
+        throw new Error("Unable to Load Module, as I am unable to find id=\"" + moduleConf.id + "\" inside Root DOM");
+      }
 
       //setup this.$el & this.$$ if jQuery present.
       if (jQuery) {
@@ -63,6 +75,7 @@
       }
 
       //subscribeAll SandboxEvents();
+      var self = this;
 
       if (this.sandboxEvents !== undefined) {
         choona.Util.for(this.sandboxEvents, function(methodName, eventName) {
@@ -87,8 +100,12 @@
         log("started module -> " + this._sandBoxData.id);
       } else {
         //TODO - move all these message to common place !
+        //TODO - do we need to show error ?
         throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
       }
+    },
+    start: function() {
+      //This will be override by User !
     },
     _getEventBus: function() {
       return this._sandBoxData.eventBus;
@@ -122,9 +139,7 @@
     },
     startSubModule: function(data) {
       //TODO - user should be able to load submodule without id
-      if (typeof data.id !== "string" || data.id === "") {
-        throw new Error("Id provided is not String or it is a blank sting");
-      }
+
       if (this._sandBoxData.subModuleList[data.id] === undefined) {
         //You cannot load more than 1 module at given Id.
         this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
