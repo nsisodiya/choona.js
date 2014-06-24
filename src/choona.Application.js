@@ -35,7 +35,7 @@
   choona.Settings.GlobalEventBus = new choona.EventBus();
   choona.Application = choona.Base.extend({
     initialize: function(moduleConf, subModuleConf) {
-      choona.Application.parent.call(this);
+      choona.Base.call(this);
 
       var protoObjModule = moduleConf.module;
 
