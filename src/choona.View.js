@@ -15,10 +15,6 @@
 (function() {
   "use strict";
 
-  //TODO - you can rename this to choona.View and all views will be extended from this
-  //TODO - like choona.view.extend(...)
-
-
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
   var log = choona.Util.log;
@@ -32,7 +28,8 @@
         topicList: {},
         subModuleList: {},
         id: moduleConf.id,
-        domEvents: []
+        domEvents: [],
+        mercikillFunc: null
       };
 
       if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
@@ -40,6 +37,7 @@
       }
 
       if (subModuleConf !== undefined) {
+        this._viewMetadata.mercikillFunc = subModuleConf.mercikillFunc;
         this._viewMetadata.eventBus = subModuleConf.parentEventBus;
         this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
       } else {
@@ -96,7 +94,6 @@
         choona.Settings.preStart.call(this);
       }
 
-      //TODO - mercikill
       if (typeof this.start === "function") {
         this.start();
         log("started module -> " + this._viewMetadata.id);
@@ -140,23 +137,23 @@
       bus.publish.apply(bus, arguments);
     },
     startSubModule: function(data) {
-      //TODO - user should be able to load submodule without id
-
+      var self = this;
       if (this._viewMetadata.subModuleList[data.id] === undefined) {
-        //You cannot load more than 1 module at given Id.
-
-        //        this._viewMetadata.subModuleList[data.id] = new choona.Application(data, {
-        //          parentNode: this.$,
-        //          parentEventBus: this._getEventBus()
-        //        });
-
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
-          parentEventBus: this._getEventBus()
+          parentEventBus: this._getEventBus(),
+          mercikillFunc: function() {
+            self.endSubModule(data.id);
+          }
         });
-
+        //TODO test mercikillFunc
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
+      }
+    },
+    killme: function() {
+      if (typeof this._viewMetadata.mercikillFunc === "function") {
+        this._viewMetadata.mercikillFunc();
       }
     },
     endSubModule: function(id) {

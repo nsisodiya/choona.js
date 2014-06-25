@@ -294,10 +294,6 @@ choona.Base = choona.klass({});
 (function() {
   "use strict";
 
-  //TODO - you can rename this to choona.View and all views will be extended from this
-  //TODO - like choona.view.extend(...)
-
-
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
   var log = choona.Util.log;
@@ -311,7 +307,8 @@ choona.Base = choona.klass({});
         topicList: {},
         subModuleList: {},
         id: moduleConf.id,
-        domEvents: []
+        domEvents: [],
+        mercikillFunc: null
       };
 
       if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
@@ -319,6 +316,7 @@ choona.Base = choona.klass({});
       }
 
       if (subModuleConf !== undefined) {
+        this._viewMetadata.mercikillFunc = subModuleConf.mercikillFunc;
         this._viewMetadata.eventBus = subModuleConf.parentEventBus;
         this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
       } else {
@@ -375,7 +373,6 @@ choona.Base = choona.klass({});
         choona.Settings.preStart.call(this);
       }
 
-      //TODO - mercikill
       if (typeof this.start === "function") {
         this.start();
         log("started module -> " + this._viewMetadata.id);
@@ -419,23 +416,23 @@ choona.Base = choona.klass({});
       bus.publish.apply(bus, arguments);
     },
     startSubModule: function(data) {
-      //TODO - user should be able to load submodule without id
-
+      var self = this;
       if (this._viewMetadata.subModuleList[data.id] === undefined) {
-        //You cannot load more than 1 module at given Id.
-
-        //        this._viewMetadata.subModuleList[data.id] = new choona.Application(data, {
-        //          parentNode: this.$,
-        //          parentEventBus: this._getEventBus()
-        //        });
-
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
-          parentEventBus: this._getEventBus()
+          parentEventBus: this._getEventBus(),
+          mercikillFunc: function() {
+            self.endSubModule(data.id);
+          }
         });
-
+        //TODO test mercikillFunc
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
+      }
+    },
+    killme: function() {
+      if (typeof this._viewMetadata.mercikillFunc === "function") {
+        this._viewMetadata.mercikillFunc();
       }
     },
     endSubModule: function(id) {
@@ -557,13 +554,11 @@ choona.Base = choona.klass({});
         });
       });
 
-      //TODO unbind these callback when you end router !!
 
       //TODO - there should be mode for speficify that we want to load all modules on same place with ending previous module
       //TODO OR you want to hide module !
 
-
-      choona.Util.bindEvent(document, "click", function(e) {
+      this.onDocumentClick = function(e) {
         var path = e.target.getAttribute("href");
         var x = self.loadPath(path, false);
         if (x === false) {
@@ -571,17 +566,23 @@ choona.Base = choona.klass({});
           e.stopImmediatePropagation();
           e.preventDefault();
         }
-      });
-
-      choona.Util.bindEvent(window, "popstate", function(e) {
+      };
+      this.onPopstate = function(e) {
         var path = document.location.pathname;
         self.loadPath(path, true);
-      });
+      };
+
+
+
+      choona.Util.bindEvent(document, "click", this.onDocumentClick);
+      choona.Util.bindEvent(window, "popstate", this.onPopstate);
 
     },
+
+
     loadPath: function(path, back) {
 
-      //TODO Router API in sandbox
+      //TODO Router API in sandbox, need match function !
       //https://github.com/PaulKinlan/leviroutes/blob/master/routes.js
       //https://github.com/olivernn/davis.js/blob/master/davis.js
       // https://github.com/haithembelhaj/RouterJs/blob/master/Router.js
@@ -602,8 +603,11 @@ choona.Base = choona.klass({});
       });
       return !pathMatched;
     },
-    end: {
-
+    end: function() {
+      choona.Util.unbindEvent(document, "click", this.onDocumentClick);
+      choona.Util.unbindEvent(window, "popstate", this.onPopstate);
+      delete this.onDocumentClick;
+      delete this.onPopstate;
     }
   });
 })();

@@ -3,6 +3,8 @@
 
 
 //TODO - you always need to write initialize function :(
+//TODO - you can remove start function and lets code inside initialize function !!
+
   App.BlogModule = choona.View.extend({
     initialize: function () {
       choona.View.apply(this, arguments);
@@ -26,10 +28,7 @@
   App.main = choona.View.extend({
     initialize: function () {
       choona.View.apply(this, arguments);
-    },
-    template:"<a href='/dash'>/dashboard</a><br/><a href='/blog'>/blog</a><br/><a href='/settings'>/settings</a><div id='mainModule'></div>",
-    start: function () {
-      var self = this;
+
       this.startSubModule({
         id:"mainModule",
         module: choona.Router,
@@ -40,6 +39,10 @@
           }
         }
       });
+    },
+    template:"<a href='/dash'>/dashboard</a><br/><a href='/blog'>/blog</a><br/><a href='/settings'>/settings</a><div id='mainModule'></div>",
+    start: function () {
+
     }
   });
 })();
