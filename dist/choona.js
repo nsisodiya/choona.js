@@ -306,7 +306,7 @@ choona.Base = choona.klass({});
       choona.Base.call(this);
 
       this.config = moduleConf.config;
-      this._sandBoxData = {
+      this._viewMetadata = {
         eventBus: choona.Settings.GlobalEventBus,
         topicList: {},
         subModuleList: {},
@@ -319,7 +319,7 @@ choona.Base = choona.klass({});
       }
 
       if (subModuleConf !== undefined) {
-        this._sandBoxData.eventBus = subModuleConf.parentEventBus;
+        this._viewMetadata.eventBus = subModuleConf.parentEventBus;
         this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
       } else {
         this.$ = document.querySelector("#" + moduleConf.id);
@@ -352,7 +352,7 @@ choona.Base = choona.klass({});
 
       //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create conflicts in naming
       if (this.isolatedEventBus === true) {
-        this._sandBoxData.eventBus = new choona.EventBus();
+        this._viewMetadata.eventBus = new choona.EventBus();
       }
 
       //subscribeAll SandboxEvents();
@@ -378,39 +378,39 @@ choona.Base = choona.klass({});
       //TODO - mercikill
       if (typeof this.start === "function") {
         this.start();
-        log("started module -> " + this._sandBoxData.id);
+        log("started module -> " + this._viewMetadata.id);
       } else {
         //TODO - move all these message to common place !
         //TODO - do we need to show error ?
-        throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._sandBoxData.id);
+        throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._viewMetadata.id);
       }
     },
     start: function() {
       //This will be override by User !
     },
     _getEventBus: function() {
-      return this._sandBoxData.eventBus;
+      return this._viewMetadata.eventBus;
     },
     subscribeSandboxEvent: function(topic, methodName) {
       var self = this;
       var callback = function() {
         self[methodName].apply(self, arguments);
       };
-      if (this._sandBoxData.topicList[topic] === undefined) {
-        this._sandBoxData.topicList[topic] = [];
+      if (this._viewMetadata.topicList[topic] === undefined) {
+        this._viewMetadata.topicList[topic] = [];
       }
       var bus = this._getEventBus();
-      this._sandBoxData.topicList[topic].push(bus.subscribe(topic, callback));
+      this._viewMetadata.topicList[topic].push(bus.subscribe(topic, callback));
       log("subscribed topic -> " + topic);
     },
     unSubscribeSandboxEvent: function(topic) {
       log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
-      if (this._sandBoxData.topicList[topic] !== undefined) {
-        this._sandBoxData.topicList[topic].map(function(v, i) {
+      if (this._viewMetadata.topicList[topic] !== undefined) {
+        this._viewMetadata.topicList[topic].map(function(v, i) {
           bus.unsubscribe(v);
         });
-        delete this._sandBoxData.topicList[topic];
+        delete this._viewMetadata.topicList[topic];
       }
     },
     publishSandboxEvent: function(topic, val) {
@@ -421,15 +421,15 @@ choona.Base = choona.klass({});
     startSubModule: function(data) {
       //TODO - user should be able to load submodule without id
 
-      if (this._sandBoxData.subModuleList[data.id] === undefined) {
+      if (this._viewMetadata.subModuleList[data.id] === undefined) {
         //You cannot load more than 1 module at given Id.
 
-        //        this._sandBoxData.subModuleList[data.id] = new choona.Application(data, {
+        //        this._viewMetadata.subModuleList[data.id] = new choona.Application(data, {
         //          parentNode: this.$,
         //          parentEventBus: this._getEventBus()
         //        });
 
-        this._sandBoxData.subModuleList[data.id] = new data.module(data, {
+        this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus()
         });
@@ -439,9 +439,9 @@ choona.Base = choona.klass({});
       }
     },
     endSubModule: function(id) {
-      if (this._sandBoxData.subModuleList[id] !== undefined) {
-        this._sandBoxData.subModuleList[id]._endModuleResources();
-        delete this._sandBoxData.subModuleList[id];
+      if (this._viewMetadata.subModuleList[id] !== undefined) {
+        this._viewMetadata.subModuleList[id]._endModuleResources();
+        delete this._viewMetadata.subModuleList[id];
       }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
@@ -465,7 +465,7 @@ choona.Base = choona.klass({});
           }
         };
         choona.Util.bindEvent(self.$, eventName, callback);
-        self._sandBoxData.domEvents[key] = {
+        self._viewMetadata.domEvents[key] = {
           eventName: eventName,
           callback: callback
         };
@@ -473,10 +473,10 @@ choona.Base = choona.klass({});
     },
     off: function(key) {
       //Unsubscribe dom event
-      var v = this._sandBoxData.domEvents[key];
+      var v = this._viewMetadata.domEvents[key];
       if (v !== undefined && typeof v === "object") {
         choona.Util.unbindEvent(this.$, v.eventName, v.callback);
-        delete this._sandBoxData.domEvents[key];
+        delete this._viewMetadata.domEvents[key];
       }
     },
     _endModuleResources: function() {
@@ -489,7 +489,7 @@ choona.Base = choona.klass({});
 
       //endAllSubModules
       var self = this;
-      choona.Util.for(this._sandBoxData.subModuleList, function(v, id) {
+      choona.Util.for(this._viewMetadata.subModuleList, function(v, id) {
         self.endSubModule(id);
       });
 
@@ -498,7 +498,7 @@ choona.Base = choona.klass({});
       }
 
       //unSubscribing All DOM events
-      this._sandBoxData.domEvents.map(function(v, key) {
+      this._viewMetadata.domEvents.map(function(v, key) {
         self.off(key);
       });
 
@@ -506,7 +506,7 @@ choona.Base = choona.klass({});
       this.$.innerHTML = "";
 
       //unSubscribe All SandboxEvents
-      choona.Util.for(this._sandBoxData.topicList, function(v, topic) {
+      choona.Util.for(this._viewMetadata.topicList, function(v, topic) {
         self.unSubscribeSandboxEvent(topic);
       });
 
@@ -516,13 +516,13 @@ choona.Base = choona.klass({});
       delete this.$el;
       delete this.$$;
       delete this.config;
-      log("ended module -> " + this._sandBoxData.id);
-      delete this._sandBoxData.id;
-      delete this._sandBoxData.subModuleList;
-      delete this._sandBoxData.eventBus;
-      delete this._sandBoxData.topicList;
-      delete this._sandBoxData.domEvents;
-      delete this._sandBoxData;
+      log("ended module -> " + this._viewMetadata.id);
+      delete this._viewMetadata.id;
+      delete this._viewMetadata.subModuleList;
+      delete this._viewMetadata.eventBus;
+      delete this._viewMetadata.topicList;
+      delete this._viewMetadata.domEvents;
+      delete this._viewMetadata;
     }
   });
 
