@@ -373,13 +373,10 @@ choona.Base = choona.klass({});
         choona.Settings.preStart.call(this);
       }
 
+      //TODO - we can remove start function as initialize will work fine !!
       if (typeof this.start === "function") {
         this.start();
         log("started module -> " + this._viewMetadata.id);
-      } else {
-        //TODO - move all these message to common place !
-        //TODO - do we need to show error ?
-        throw new Error("moduleConf.module.start is undefined for moduleConf.id = " + this._viewMetadata.id);
       }
     },
     start: function() {
@@ -437,7 +434,7 @@ choona.Base = choona.klass({});
     },
     endSubModule: function(id) {
       if (this._viewMetadata.subModuleList[id] !== undefined) {
-        this._viewMetadata.subModuleList[id]._endModuleResources();
+        this._viewMetadata.subModuleList[id]._endModule();
         delete this._viewMetadata.subModuleList[id];
       }
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
@@ -476,7 +473,10 @@ choona.Base = choona.klass({});
         delete this._viewMetadata.domEvents[key];
       }
     },
-    _endModuleResources: function() {
+    end: function() {
+      console.log("Ending base View");
+    },
+    _endModule: function() {
 
       //call postEnd();
       if (typeof choona.Settings.postEnd === "function") {
