@@ -13,7 +13,23 @@ choona.Settings.preStart = function(){
 choona.Settings.debug= true;
 choona.Settings.isConsoleAvailable= true;
 
-var application = new choona.Application({
+
+//TODO , We need some more compact notation for this,
+//Something like jquery plugin
+
+//Todo - you can rename this to choona.startView()
+var MainViewLoader = function(data){
+  return new data.module({
+    id:data.id
+  });
+};
+
+//TOOD - inside view, you can define id, If user know where you are loading it !!
+
+//TODO - var app = new App.main({});
+
+var app = MainViewLoader({
   id:"todoapp",
-  module: App.todoModule
+  module: App.todoModule,
+  config : null
 });

@@ -1,7 +1,14 @@
 (function () {
   "use strict";
 
-  App.todoModule = {
+  choona.Util.addInitialize = function (proto) {
+    proto.initialize = function () {
+      choona.View.apply(this, arguments);
+    };
+    return proto;
+  };
+
+  App.todoModule = choona.View.extend(choona.Util.addInitialize({
     template : "todoModule/todoModule.html",
     sandboxEvents: {
 
@@ -68,7 +75,6 @@
     end: function () {
 
     }
-
-  };
+  }));
 })();
 
