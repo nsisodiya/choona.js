@@ -8,7 +8,7 @@ Latest Release
 **1.4.0**  Major changes , release date 1 July 2014
 
 * Complete revamp of code base
-* added klass.js, Everything in Choona now extend from baseClass
+* added klass.js, Everything in Choona now extend from klass.js
 
 
 
