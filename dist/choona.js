@@ -168,7 +168,6 @@ choona.Base = choona.klass({});
         }
       }
     },
-    
     loadHTML: function(ele, str) {
       ele.innerHTML = str;
       //TODO - find any submodule
@@ -279,17 +278,7 @@ choona.Base = choona.klass({});
   });
 })();
 ;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
  * choona.View
- * Every View will be Inherited from choona.View
- *
- * @author Narendra Sisodiya
  */
 
 (function() {
@@ -309,7 +298,7 @@ choona.Base = choona.klass({});
         subModuleList: {},
         id: moduleConf.id,
         domEvents: [],
-        mercikillFunc: null
+        mercykillFunc: null
       };
 
       if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
@@ -317,7 +306,7 @@ choona.Base = choona.klass({});
       }
 
       if (subModuleConf !== undefined) {
-        this._viewMetadata.mercikillFunc = subModuleConf.mercikillFunc;
+        this._viewMetadata.mercykillFunc = subModuleConf.mercykillFunc;
         this._viewMetadata.eventBus = subModuleConf.parentEventBus;
         this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
       } else {
@@ -419,7 +408,7 @@ choona.Base = choona.klass({});
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus(),
-          mercikillFunc: function() {
+          mercykillFunc: function() {
             self.endSubModule(data.id);
           }
         });
@@ -428,8 +417,8 @@ choona.Base = choona.klass({});
       }
     },
     killme: function() {
-      if (typeof this._viewMetadata.mercikillFunc === "function") {
-        this._viewMetadata.mercikillFunc();
+      if (typeof this._viewMetadata.mercykillFunc === "function") {
+        this._viewMetadata.mercykillFunc();
       }
     },
     endSubModule: function(id) {
@@ -506,8 +495,6 @@ choona.Base = choona.klass({});
       choona.Util.for(this._viewMetadata.topicList, function(v, topic) {
         self.unSubscribeSandboxEvent(topic);
       });
-
-
 
       delete this.$;
       delete this.$el;

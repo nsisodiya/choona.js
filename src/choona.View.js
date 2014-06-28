@@ -1,15 +1,5 @@
 /**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
  * choona.View
- * Every View will be Inherited from choona.View
- *
- * @author Narendra Sisodiya
  */
 
 (function() {
@@ -29,7 +19,7 @@
         subModuleList: {},
         id: moduleConf.id,
         domEvents: [],
-        mercikillFunc: null
+        mercykillFunc: null
       };
 
       if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
@@ -37,7 +27,7 @@
       }
 
       if (subModuleConf !== undefined) {
-        this._viewMetadata.mercikillFunc = subModuleConf.mercikillFunc;
+        this._viewMetadata.mercykillFunc = subModuleConf.mercykillFunc;
         this._viewMetadata.eventBus = subModuleConf.parentEventBus;
         this.$ = subModuleConf.parentNode.querySelector("#" + moduleConf.id);
       } else {
@@ -139,7 +129,7 @@
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus(),
-          mercikillFunc: function() {
+          mercykillFunc: function() {
             self.endSubModule(data.id);
           }
         });
@@ -148,8 +138,8 @@
       }
     },
     killme: function() {
-      if (typeof this._viewMetadata.mercikillFunc === "function") {
-        this._viewMetadata.mercikillFunc();
+      if (typeof this._viewMetadata.mercykillFunc === "function") {
+        this._viewMetadata.mercykillFunc();
       }
     },
     endSubModule: function(id) {
@@ -226,8 +216,6 @@
       choona.Util.for(this._viewMetadata.topicList, function(v, topic) {
         self.unSubscribeSandboxEvent(topic);
       });
-
-
 
       delete this.$;
       delete this.$el;
