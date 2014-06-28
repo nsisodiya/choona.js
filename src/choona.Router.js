@@ -87,8 +87,8 @@
             history.pushState({}, "", path);
           }
           var x = true;
-          if (typeof self.config.match === "function") {
-            x = self.config.match(path);
+          if (typeof self.config.before === "function") {
+            x = self.config.before(path);
           }
           if (x === true) {
             v.callback();

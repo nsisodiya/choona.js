@@ -1,8 +1,14 @@
+IMP Notice
+==========
+Please use 
+  bower install choona.js#1.3.2
+
+for installing, current code in master is UNSTABLE
+
 choona.js
 =========
-A decoupled, event-driven architecture for developing large scale  modular JavaScript applications.
+A decoupled, event-driven architecture for developing large scale modular JavaScript applications.
 fully inspired by - https://github.com/eric-brechemier/lb_js_scalableApp
-
 
 Size
 ====
@@ -20,14 +26,13 @@ Features
 * modules can be tested separately
 * replacing any module without affecting other modules
 * concept of sub module
-* recursive end of submodule
+* recursive end of submodules
 * local eventBus
-* "Id" can be repeated for modules
 
-
-Version
+Install
 ==========
-please use choona.js 1.3 version ! old versions are not useful.
+ bower install choona.js#1.3.2
+ 
 
 Demo
 =============
@@ -36,9 +41,8 @@ Visit http://nsisodiya.github.com/Demo-Scalable-App
 
 Dependancy
 ============
-choona.js do not has any dependancy. It is written is Plain JavaSrcipt,
-YOu can use jQuery as base library. I do not like creating base library or a Base
-Library wrapper
+choona.js do not has any dependancy. It is written is Plain JavaScript.
+You can use Backbone, jQuery or any other frameworks if you wish. 
 
 API
 ====

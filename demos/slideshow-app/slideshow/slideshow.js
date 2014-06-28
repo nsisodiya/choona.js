@@ -32,7 +32,7 @@
             "/blog": App.BlogModule,
             "/settings": App.SettingModule
           },
-          match: function (req) {
+          before: function (req) {
             console.log(req);
             return true;
           }
