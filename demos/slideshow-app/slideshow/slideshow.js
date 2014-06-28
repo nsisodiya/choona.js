@@ -24,7 +24,7 @@
     initialize: function () {
       choona.View.apply(this, arguments);
 
-      this.startSubModule({
+      this.loadSubView({
         id:"mainModule",
         module: choona.Router,
         config : {

@@ -166,7 +166,7 @@ A better way to do this using event hash in module definition !
 
 ```javascript
     myView = choona.View.extend({
-        sandBoxEvents:{
+        sandboxEvents:{
             "NameChanged":"onNameChangedCallback"
         },
         onNameChangedCallback: function(val){
@@ -183,15 +183,15 @@ When a view is ended, all its events got unsubscribed automatically**
 	this.sb.unsubscribe(<Topic-Id>);
 ```
 
-### this.startSubModule  ==> Load a subView inside current View
+### this.loadSubView  ==> Load a subView inside current View
 ```javascript
-	this.startSubModule({
+	this.loadSubView({
 		id : <id-of-container>, 
 		module: <Sub-View>, 
 		config: <optional-configuration-object>
 	});
 ```
-### this.endSubModule  ==> End a subView
+### this.removeSubView  ==> End a subView
 ```javascript
-	var <module-object> = this.endSubModule(<id-of-container>);
+	var <module-object> = this.removeSubView(<id-of-container>);
 ```

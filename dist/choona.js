@@ -402,14 +402,14 @@ choona.Base = choona.klass({});
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
-    startSubModule: function(data) {
+    loadSubView: function(data) {
       var self = this;
       if (this._viewMetadata.subModuleList[data.id] === undefined) {
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
           parentEventBus: this._getEventBus(),
           mercykillFunc: function() {
-            self.endSubModule(data.id);
+            self.removeSubView(data.id);
           }
         });
       } else {
@@ -421,7 +421,7 @@ choona.Base = choona.klass({});
         this._viewMetadata.mercykillFunc();
       }
     },
-    endSubModule: function(id) {
+    removeSubView: function(id) {
       if (this._viewMetadata.subModuleList[id] !== undefined) {
         this._viewMetadata.subModuleList[id]._endModule();
         delete this._viewMetadata.subModuleList[id];
@@ -476,7 +476,7 @@ choona.Base = choona.klass({});
       //endAllSubModules
       var self = this;
       choona.Util.for(this._viewMetadata.subModuleList, function(v, id) {
-        self.endSubModule(id);
+        self.removeSubView(id);
       });
 
       if (typeof this.end === "function") {
@@ -510,6 +510,9 @@ choona.Base = choona.klass({});
     }
   });
 
+  choona.loadView = function(moduleConf) {
+    var app = new moduleConf.module(moduleConf);
+  };
 
 })();
 ;//Choona.Router
@@ -546,8 +549,8 @@ choona.Base = choona.klass({});
         self.router.push({
           path: path,
           callback: function() {
-            self.endSubModule("router");
-            self.startSubModule({
+            self.removeSubView("router");
+            self.loadSubView({
               id: "router",
               module: module
             });

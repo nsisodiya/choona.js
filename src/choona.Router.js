@@ -32,8 +32,8 @@
         self.router.push({
           path: path,
           callback: function() {
-            self.endSubModule("router");
-            self.startSubModule({
+            self.removeSubView("router");
+            self.loadSubView({
               id: "router",
               module: module
             });
