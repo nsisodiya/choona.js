@@ -2,6 +2,20 @@
 
 // this is just a module !!
 
+// support path like
+//
+//
+//  /blog
+//  /blog/*
+//  /blog/**
+//  /blog/**/*
+//  /user/settings/password
+//  /user/blog/*  --> /user/blog/1, /user/blog/2, /user/blog/100
+//    /user:id
+
+
+
+
 //TODO replace module with widget or component, So that people will not confuse that this is not a requirejs thing..
 
 (function() {
@@ -64,6 +78,7 @@
 
       //TODO - we need to add test cases !!
 
+      var self = this;
       var pathMatched = false;
       this.router.map(function(v, i) {
         if (v.path === path) {
@@ -71,7 +86,13 @@
           if (back === false) {
             history.pushState({}, "", path);
           }
-          v.callback();
+          var x = true;
+          if(typeof self.config.match === "function"){
+            x = self.config.match(path);
+          }
+          if(x === true){
+            v.callback();
+          }
         }
       });
       return !pathMatched;

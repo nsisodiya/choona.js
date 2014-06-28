@@ -6,7 +6,6 @@
     initialize: function () {
       choona.Model.call(this);
       this.todoList = [];
-
     },
     addNewTodo: function (title) {
       this.todoList.push({

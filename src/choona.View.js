@@ -6,8 +6,8 @@
  */
 
 /**
- * choona.BaseView
- * Every View will be Inherited from choona.BaseView
+ * choona.View
+ * Every View will be Inherited from choona.View
  *
  * @author Narendra Sisodiya
  */
@@ -129,7 +129,7 @@
       }
     },
     publishSandboxEvent: function(topic, val) {
-      log("publishing topic ->" + topic + " = " + val);
+      log("publishing topic ->" + arguments);
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
@@ -143,7 +143,6 @@
             self.endSubModule(data.id);
           }
         });
-        //TODO test mercikillFunc
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
       }

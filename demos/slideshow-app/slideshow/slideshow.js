@@ -31,6 +31,10 @@
           routes: {
             "/blog": App.BlogModule,
             "/settings": App.SettingModule
+          },
+          match: function (req) {
+            console.log(req);
+            return true;
           }
         }
       });
