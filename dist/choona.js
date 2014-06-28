@@ -168,6 +168,7 @@ choona.Base = choona.klass({});
         }
       }
     },
+    
     loadHTML: function(ele, str) {
       ele.innerHTML = str;
       //TODO - find any submodule
@@ -285,8 +286,8 @@ choona.Base = choona.klass({});
  */
 
 /**
- * choona.BaseView
- * Every View will be Inherited from choona.BaseView
+ * choona.View
+ * Every View will be Inherited from choona.View
  *
  * @author Narendra Sisodiya
  */
@@ -408,7 +409,7 @@ choona.Base = choona.klass({});
       }
     },
     publishSandboxEvent: function(topic, val) {
-      log("publishing topic ->" + topic + " = " + val);
+      log("publishing topic ->" + arguments);
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
@@ -422,7 +423,6 @@ choona.Base = choona.klass({});
             self.endSubModule(data.id);
           }
         });
-        //TODO test mercikillFunc
       } else {
         throw new Error("data.id::" + data.id + " is already contains a module.  Please provide separate id new module");
       }
@@ -529,6 +529,20 @@ choona.Base = choona.klass({});
 
 // this is just a module !!
 
+// support path like
+//
+//
+//  /blog
+//  /blog/*
+//  /blog/**
+//  /blog/**/*
+//  /user/settings/password
+//  /user/blog/*  --> /user/blog/1, /user/blog/2, /user/blog/100
+//    /user:id
+
+
+
+
 //TODO replace module with widget or component, So that people will not confuse that this is not a requirejs thing..
 
 (function() {
@@ -591,6 +605,7 @@ choona.Base = choona.klass({});
 
       //TODO - we need to add test cases !!
 
+      var self = this;
       var pathMatched = false;
       this.router.map(function(v, i) {
         if (v.path === path) {
@@ -598,7 +613,13 @@ choona.Base = choona.klass({});
           if (back === false) {
             history.pushState({}, "", path);
           }
-          v.callback();
+          var x = true;
+          if (typeof self.config.before === "function") {
+            x = self.config.before(path);
+          }
+          if (x === true) {
+            v.callback();
+          }
         }
       });
       return !pathMatched;
