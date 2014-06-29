@@ -86,7 +86,7 @@ This is an optional configuration argument. An Module can read its optional conf
 ```javascript
 	//helloWorldApp.js
 	var helloWorldApp = choona.View.extend({
-		template: "<p id="hello">Hello</p><button id="submitBtn">Submit</button",
+		template: '<p id="hello">Hello</p><button id="submitBtn">Submit</button',
 		events : {
 		    "click #submitBtn" : "onSubmitBtnClick"
 		},
