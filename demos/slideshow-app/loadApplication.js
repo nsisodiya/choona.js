@@ -8,7 +8,18 @@ choona.Settings.debug= true;
 choona.Settings.isConsoleAvailable= true;
 
 
-var app = choona.loadView({
-  id:"todoapp",
-  module: App.main
+
+choona.Settings.preStart = function(){
+  var self = this;
+  $.get(this.template).done(function (data) {
+    self.$$.html(_.template(data));
+    self.lazyStart();
+  });
+};
+
+
+choona.loadView({
+  id:"app",
+  module: App.SlideShow,
+  config: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg"]
 });

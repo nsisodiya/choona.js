@@ -1,40 +1,48 @@
 (function (App) {
   "use strict";
 
-  App.BlogModule = choona.View.extend({
-    template:"This is blog Module",
+  App.SlideShow = choona.View.extend({
+    template: "slideshow/slideshow.html",
+    events:{
+      "click #nextButton": "nextSlide",
+      "click #preButton": "preSlide",
+      "click #firstSlide": "firstSlide",
+      "click #lastSlide": "lastSlide"
+    },
     initialize: function () {
       choona.View.apply(this, arguments);
-    }
-  });
-
-  App.SettingModule = choona.View.extend({
-    template:"This is Settings Module",
-    initialize: function () {
-      choona.View.apply(this, arguments);
-    }
-  });
-
-  App.main = choona.View.extend({
-    template:"<a href='/dash'>/dashboard</a><br/><a href='/blog'>/blog</a><br/><a href='/settings'>/settings</a><div id='mainModule'></div>",
-    initialize: function () {
-      choona.View.apply(this, arguments);
-
-      this.loadSubView({
-        id:"mainModule",
-        module: choona.Router,
-        config : {
-          routes: {
-            "/blog": App.BlogModule,
-            "/settings": App.SettingModule
-          },
-          before: function (req) {
-            console.log(req);
-            return true;
-          }
-        }
-      });
+      this.imageArray = this.config;
+      this.currentImageIndex = 0;
+    },
+    lazyStart: function () {
+      this.imageArrayEle = this.$el.find("#images_id");
+      this.loadImage();
+    },
+    nextSlide: function () {
+      this.currentImageIndex++;
+      if (this.currentImageIndex === this.imageArray.length) {
+        this.currentImageIndex = 0;
+      }
+      this.loadImage();
+    },
+    preSlide: function () {
+      this.currentImageIndex--;
+      if (this.currentImageIndex === -1) {
+        this.currentImageIndex = this.imageArray.length - 1;
+      }
+      this.loadImage();
+    },
+    firstSlide:function () {
+      this.currentImageIndex = 0;
+      this.loadImage();
+    },
+    lastSlide:function () {
+      this.currentImageIndex = this.imageArray.length - 1;
+      this.loadImage();
+    },
+    loadImage: function () {
+      this.$$.find("#status").html((this.currentImageIndex+1) + "/" + this.imageArray.length);
+      this.imageArrayEle.attr("src", this.imageArray[this.currentImageIndex]);
     }
   });
 })(App);
-
