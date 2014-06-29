@@ -182,5 +182,5 @@ When a view is ended, all its events got unsubscribed automatically**
 ```
 ### this.removeSubView  ==> End a subView
 ```javascript
-	var <module-object> = this.removeSubView(<id-of-container>);
+	this.removeSubView(<id-of-container>);
 ```
