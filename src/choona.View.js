@@ -60,11 +60,11 @@
         this._viewMetadata.eventBus = new choona.EventBus();
       }
 
-      //subscribeAll SandboxEvents();
+      //subscribeAll globalEvents();
       var self = this;
 
-      if (this.sandboxEvents !== undefined) {
-        choona.Util.for(this.sandboxEvents, function(methodName, eventName) {
+      if (this.globalEvents !== undefined) {
+        choona.Util.for(this.globalEvents, function(methodName, eventName) {
           self.subscribeGlobalEvent(eventName, methodName);
         });
       }
@@ -201,7 +201,7 @@
       //Remove all HTML inside this.$
       this.$.innerHTML = "";
 
-      //unSubscribe All SandboxEvents
+      //unSubscribe All globalEvents
       choona.Util.for(this._viewMetadata.topicList, function(v, topic) {
         self.unsubscribeGlobalEvent(topic);
       });
