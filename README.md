@@ -78,7 +78,7 @@ This is an optional configuration argument. An Module can read its optional conf
 
 ```html
     <body>
-        <div id="app"></div
+        <div id="app"></div>
     </body>
 ```
 
