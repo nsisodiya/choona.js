@@ -2,17 +2,13 @@
  * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
  *
  * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.klass
- *
+ * 
  * @author Narendra Sisodiya
+ * 
+ * 
+ *
  */
-
-var choona = {};
-
+;var choona = {};
 choona.klass = (function() {
   "use strict";
   var klass = function(ChildProto) {
@@ -50,44 +46,8 @@ choona.klass = (function() {
   };
   return klass;
 })();
-;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- *
- *
- */
-
-/**
- *
- //choona.Base
- //-----------
-
- //It will be base class for all the classes of choona.js, Everything in choona.js inherited from choona.Base
-
- @author Narendra Sisodiya
-
- */
-
-choona.Base = choona.klass({});
-;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- *
- *
- */
-
-/**
- * choona.Settings
- * It will be base class for all the classes of choona.js, Everything in choona.js inherited from choona.Base
- *
- * @author Narendra Sisodiya
- */
-
-(function() {
+;choona.Base = choona.klass({});
+;(function() {
   "use strict";
   choona.Settings = {
     preStart: function() {
@@ -103,20 +63,7 @@ choona.Base = choona.klass({});
     isConsoleAvailable: false
   };
 })();
-;//choona.Util (Utility Layer)
-//-----------
-
-/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- * @author `Narendra Sisodiya`
- *
- *
- **/
-
-(function() {
+;(function() {
   "use strict";
 
   // Caches a local reference to `Element.prototype` for faster access.
@@ -176,21 +123,7 @@ choona.Base = choona.klass({});
   };
 
 })();
-;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.EventBus
- * JavaScript pub/sub design pattern, It will be used for communication between different widgets and modules.
- *
- * @author Narendra Sisodiya
- */
-
-(function() {
+;(function() {
   "use strict";
   choona.EventBus = choona.Base.extend({
     initialize: function() {
@@ -250,38 +183,18 @@ choona.Base = choona.klass({});
     }
   });
 })();
-;/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.Modal
- * We use Plain JavaScript Objects as modal,
- * You can subscribe/publish events on any modal
- *
- * @author Narendra Sisodiya
- */
-
-
-(function() {
+;(function() {
   "use strict";
   choona.Model = choona.EventBus.extend({
     initialize: function() {
       choona.EventBus.call(this);
     },
-    publishModalChanges: function() {
+    publishChange: function() {
       this.publish("change");
     }
   });
 })();
-;/**
- * choona.View
- */
-
-(function() {
+;(function() {
   "use strict";
 
   choona.Settings.GlobalEventBus = new choona.EventBus();
@@ -512,11 +425,7 @@ choona.Base = choona.klass({});
   };
 
 })();
-;//Choona.Router
-
-// this is just a module !!
-
-// support path like
+;// TODO support path like
 //
 //
 //  /blog

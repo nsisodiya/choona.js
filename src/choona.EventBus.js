@@ -1,17 +1,3 @@
-/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.EventBus
- * JavaScript pub/sub design pattern, It will be used for communication between different widgets and modules.
- *
- * @author Narendra Sisodiya
- */
-
 (function() {
   "use strict";
   choona.EventBus = choona.Base.extend({

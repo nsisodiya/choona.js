@@ -1,18 +1,4 @@
-/**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
- *
- * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
- *
- */
-
-/**
- * choona.klass
- *
- * @author Narendra Sisodiya
- */
-
 var choona = {};
-
 choona.klass = (function() {
   "use strict";
   var klass = function(ChildProto) {

@@ -1,8 +1,4 @@
-//Choona.Router
-
-// this is just a module !!
-
-// support path like
+// TODO support path like
 //
 //
 //  /blog

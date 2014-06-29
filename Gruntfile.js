@@ -4,6 +4,7 @@ module.exports = function(grunt) {
   var jsFiles = ["./Gruntfile.js", "src/**/*.js", "choona.js"];
   var jsbeautifierconfigObject = grunt.file.readJSON("jsbeautifier.json");
   var sourceJsFiles = [
+    "src/headerNotice.md",
     "src/choona.Klass.js",
     "src/choona.Base.js",
     "src/choona.Settings.js",

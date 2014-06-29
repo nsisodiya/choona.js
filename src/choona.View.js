@@ -1,7 +1,3 @@
-/**
- * choona.View
- */
-
 (function() {
   "use strict";
 
