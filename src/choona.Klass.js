@@ -1,5 +1,5 @@
 var choona = {};
-choona.klass = (function() {
+(function() {
   "use strict";
   var klass = function(ChildProto) {
     var Child = function() {
@@ -34,5 +34,5 @@ choona.klass = (function() {
       return singleObj;
     };
   };
-  return klass;
+  choona.klass = klass;
 })();
