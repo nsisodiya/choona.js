@@ -18,7 +18,7 @@
         topicList: {},
         subModuleList: {},
         id: moduleConf.id,
-        domEvents: [],
+        eventsMap: [],
         mercykillFunc: null
       };
 
@@ -75,8 +75,8 @@
 
       //subscribe all DOM events !
 
-      if (this.domEvents !== undefined) {
-        this.on(this.domEvents);
+      if (this.events !== undefined) {
+        this.on(this.events);
       }
 
       //Calling the global preStart function !
@@ -158,15 +158,15 @@
 
         var callback = function(e) {
           if (hash === "") {
-            self[handler].call(self, e, e.target);
+            self[handler].call(self, e, e.target, e.target.dataset);
           } else {
             if (e.target.matches(hash)) {
-              self[handler].call(self, e, e.target);
+              self[handler].call(self, e, e.target, e.target.dataset);
             }
           }
         };
         choona.Util.bindEvent(self.$, eventName, callback);
-        self._viewMetadata.domEvents[key] = {
+        self._viewMetadata.eventsMap[key] = {
           eventName: eventName,
           callback: callback
         };
@@ -174,10 +174,10 @@
     },
     off: function(key) {
       //Unsubscribe dom event
-      var v = this._viewMetadata.domEvents[key];
+      var v = this._viewMetadata.eventsMap[key];
       if (v !== undefined && typeof v === "object") {
         choona.Util.unbindEvent(this.$, v.eventName, v.callback);
-        delete this._viewMetadata.domEvents[key];
+        delete this._viewMetadata.eventsMap[key];
       }
     },
     end: function() {
@@ -202,7 +202,7 @@
       }
 
       //unSubscribing All DOM events
-      this._viewMetadata.domEvents.map(function(v, key) {
+      this._viewMetadata.eventsMap.map(function(v, key) {
         self.off(key);
       });
 
@@ -223,7 +223,7 @@
       delete this._viewMetadata.subModuleList;
       delete this._viewMetadata.eventBus;
       delete this._viewMetadata.topicList;
-      delete this._viewMetadata.domEvents;
+      delete this._viewMetadata.eventsMap;
       delete this._viewMetadata;
     }
   });
