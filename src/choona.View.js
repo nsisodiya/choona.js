@@ -55,7 +55,7 @@
       this.$.innerHTML = choona.Settings.postTemplateProcessing(str);
 
       /*
-       * Please note that _startIsolatedEventBus() must be called before _subscribeSandboxEvents()
+       * Please note that _startIsolatedEventBus() must be called before _subscribeGlobalEvents()
        * because, you need to get event bus for
        * */
 
@@ -69,7 +69,7 @@
 
       if (this.sandboxEvents !== undefined) {
         choona.Util.for(this.sandboxEvents, function(methodName, eventName) {
-          self.subscribeSandboxEvent(eventName, methodName);
+          self.subscribeGlobalEvent(eventName, methodName);
         });
       }
 
@@ -90,13 +90,10 @@
         log("started module -> " + this._viewMetadata.id);
       }
     },
-    start: function() {
-      //This will be override by User !
-    },
     _getEventBus: function() {
       return this._viewMetadata.eventBus;
     },
-    subscribeSandboxEvent: function(topic, methodName) {
+    subscribeGlobalEvent: function(topic, methodName) {
       var self = this;
       var callback = function() {
         self[methodName].apply(self, arguments);
@@ -108,7 +105,7 @@
       this._viewMetadata.topicList[topic].push(bus.subscribe(topic, callback));
       log("subscribed topic -> " + topic);
     },
-    unSubscribeSandboxEvent: function(topic) {
+    unsubscribeGlobalEvent: function(topic) {
       log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
       if (this._viewMetadata.topicList[topic] !== undefined) {
@@ -118,7 +115,7 @@
         delete this._viewMetadata.topicList[topic];
       }
     },
-    publishSandboxEvent: function(topic, val) {
+    publishGlobalEvent: function(topic, val) {
       log("publishing topic ->" + arguments);
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
@@ -214,7 +211,7 @@
 
       //unSubscribe All SandboxEvents
       choona.Util.for(this._viewMetadata.topicList, function(v, topic) {
-        self.unSubscribeSandboxEvent(topic);
+        self.unsubscribeGlobalEvent(topic);
       });
 
       delete this.$;

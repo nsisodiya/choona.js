@@ -10,10 +10,10 @@
 
   App.todoModule = choona.View.extend(choona.Util.addInitialize({
     template : "todoModule/todoModule.html",
-    sandboxEvents: {
+    globalEvents: {
 
     },
-    domEvents:{
+    events:{
       "click .toggle"   : "toggleDone",
       "dblclick .view"  : "edit",
       "click a.destroy" : "clear",
