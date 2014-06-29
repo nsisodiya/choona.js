@@ -1,14 +1,7 @@
 (function () {
   "use strict";
 
-  choona.Util.addInitialize = function (proto) {
-    proto.initialize = function () {
-      choona.View.apply(this, arguments);
-    };
-    return proto;
-  };
-
-  App.todoModule = choona.View.extend(choona.Util.addInitialize({
+  App.todoModule = choona.View.extend({
     template : "todoModule/todoModule.html",
     globalEvents: {
 
@@ -23,6 +16,18 @@
       "keyup #new-todo":  "createOnEnter",
       "click #clear-completed": "clearCompleted",
       "click #toggle-all": "toggleAllComplete"
+    },
+    initialize: function () {
+      choona.View.apply(this, arguments);
+      var self = this;
+      $.get("todoModule/todoModuleMainTemplate.html").done(function (data) {
+        self.todoModuleMainTemplate = data;
+        self.renderMainTemplate();
+      });
+      this.model = new App.todoDataKlass();
+      this.model.on("change", function () {
+        self.renderMainTemplate();
+      });
     },
     edit: function (e, ele) {
       $(ele).closest('li').addClass("editing");
@@ -42,18 +47,6 @@
       }else{
         this.model.markAllUnfinished();
       }
-    },
-    start: function () {
-      var self = this;
-      $.get("todoModule/todoModuleMainTemplate.html").done(function (data) {
-        self.todoModuleMainTemplate = data;
-        self.renderMainTemplate();
-      });
-      this.model = new App.todoDataKlass();
-      this.model.on("change", function () {
-        self.renderMainTemplate();
-      });
-
     },
     createOnEnter: function (e) {
       if(e.keyCode === 13){

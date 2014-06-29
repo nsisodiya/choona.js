@@ -79,12 +79,8 @@
       if (typeof choona.Settings.preStart === "function") {
         choona.Settings.preStart.call(this);
       }
+      //TODO - You can find all submodule from DOM and load subView
 
-      //TODO - we can remove start function as initialize will work fine !!
-      if (typeof this.start === "function") {
-        this.start();
-        log("started module -> " + this._viewMetadata.id);
-      }
     },
     _getEventBus: function() {
       return this._viewMetadata.eventBus;

@@ -99,7 +99,7 @@ This is an optional configuration argument. An Module can read its optional conf
 		    alert("Hello, You have clicked on Submit button");
 		}
 	});
-	//Start App
+	//Start Application
 	new choona.loadView({
 		id: "app", 
 		module: helloWorldApp

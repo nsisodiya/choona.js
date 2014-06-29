@@ -1,9 +1,5 @@
-(function () {
+(function (App) {
   "use strict";
-
-
-//TODO - you always need to write initialize function :(
-//TODO - you can remove start function and lets code inside initialize function !!
 
   App.BlogModule = choona.View.extend({
     template:"This is blog Module",
@@ -40,5 +36,5 @@
       });
     }
   });
-})();
+})(App);
 

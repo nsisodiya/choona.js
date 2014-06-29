@@ -283,12 +283,8 @@
       if (typeof choona.Settings.preStart === "function") {
         choona.Settings.preStart.call(this);
       }
+      //TODO - You can find all submodule from DOM and load subView
 
-      //TODO - we can remove start function as initialize will work fine !!
-      if (typeof this.start === "function") {
-        this.start();
-        log("started module -> " + this._viewMetadata.id);
-      }
     },
     _getEventBus: function() {
       return this._viewMetadata.eventBus;
@@ -454,9 +450,6 @@
   choona.Router = choona.View.extend({
     initialize: function() {
       choona.View.apply(this, arguments);
-    },
-    template: "<router id='router'></router>",
-    start: function() {
       this.router = [];
       var self = this;
       choona.Util.for(this.config.routes, function(module, path) {
@@ -489,15 +482,10 @@
         var path = document.location.pathname;
         self.loadPath(path, true);
       };
-
-
-
       choona.Util.bindEvent(document, "click", this.onDocumentClick);
       choona.Util.bindEvent(window, "popstate", this.onPopstate);
-
     },
-
-
+    template: "<router id='router'></router>",
     loadPath: function(path, back) {
 
       //TODO Router API in sandbox, need match function !
