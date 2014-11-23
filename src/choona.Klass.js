@@ -8,7 +8,7 @@ var choona = {};
       }
     };
     var Parent;
-    if (this !== undefined && this.extend === klass) {
+    if (this.extend === klass) {
       Parent = this;
     } else {
       Parent = Object;
@@ -23,6 +23,7 @@ var choona = {};
 
     Child.extend = klass;
     Child.parent = Parent;
+    Child.super = Parent.prototype;
     return Child;
   };
   choona.klass = klass;
