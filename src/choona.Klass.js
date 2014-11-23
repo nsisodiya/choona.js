@@ -8,7 +8,7 @@ var choona = {};
       }
     };
     var Parent;
-    if (this.extend === klass) {
+    if (this !== undefined && this.extend === klass) {
       Parent = this;
     } else {
       Parent = Object;
