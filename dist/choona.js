@@ -21,8 +21,7 @@
     if (this !== undefined && this.extend === klass) {
       Parent = this;
     } else {
-      Parent = {};
-      Parent.prototype = {};
+      Parent = Object;
     }
     Child.prototype = Object.create(Parent.prototype);
     Child.prototype.constructor = Child;
@@ -34,15 +33,8 @@
 
     Child.extend = klass;
     Child.parent = Parent;
+    Child.super = Parent.prototype;
     return Child;
-  };
-
-  klass.Singleton = function(CLASS_OBJ) {
-    var CLASS = klass(CLASS_OBJ);
-    var singleObj = new CLASS();
-    return function() {
-      return singleObj;
-    };
   };
   choona.klass = klass;
 })();

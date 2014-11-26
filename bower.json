@@ -2,7 +2,7 @@
   "name": "choona.js",
   "repo": "nsisodiya/choona.js",
   "version": "1.4.0",
-  "main": "choona.js",
+  "main": "dist/choona.js",
   "keywords": [
     "scalable",
     "framework"
