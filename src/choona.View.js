@@ -35,8 +35,8 @@
       }
 
       //setup this.$el & this.$$ if jQuery present.
-      if (jQuery) {
-        this.$el = this.$$ = jQuery(this.$);
+      if (window.jQuery) {
+        this.$el = this.$$ = window.jQuery(this.$);
       }
 
       //Loading Template !!
