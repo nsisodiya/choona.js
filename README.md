@@ -90,8 +90,8 @@ This is an optional configuration argument. An Module can read its optional conf
 		events : {
 		    "click #submitBtn" : "onSubmitBtnClick"
 		},
-		initialize: function(){	    
-		    choona.View.call(this);
+		initialize: function(){
+		    choona.View.apply(this, arguments);
 		},
 		onSubmitBtnClick: function(){
 		    //text will be changed from Hello --> Hello World
