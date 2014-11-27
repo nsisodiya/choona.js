@@ -237,7 +237,7 @@
 
       //Loading Template !!
       //TODO -Support for underscore template
-      var str;
+      var str = "";
       if (typeof this.template === "string") {
         str = this.template;
       }

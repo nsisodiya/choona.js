@@ -76,7 +76,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-jsbeautifier");
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-contrib-watch");
-  grunt.registerTask("build", ["clean", "concat", "uglify:build"]);
+  grunt.registerTask("build", ["check", "clean", "concat", "uglify:build"]);
   grunt.registerTask("check", ["jsbeautifier", "jshint"]);
+  grunt.registerTask("default", ["build"]);
 
 };
