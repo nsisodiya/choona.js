@@ -417,7 +417,7 @@
   });
 
   choona.loadView = function(moduleConf) {
-    var app = new moduleConf.module(moduleConf);
+    return new moduleConf.module(moduleConf);
   };
 
 })();
