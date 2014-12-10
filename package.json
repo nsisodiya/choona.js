@@ -18,12 +18,12 @@
   },
   "devDependencies": {
     "grunt": "0.4.2",
+    "grunt-contrib-clean": "0.5.0",
+    "grunt-contrib-concat": "0.3.0",
     "grunt-contrib-jshint": "0.6.5",
     "grunt-contrib-uglify": "0.2.7",
-    "grunt-contrib-concat": "0.3.0",
-    "grunt-contrib-clean": "0.5.0",
     "grunt-contrib-watch": "0.5.3",
-    "grunt-jsbeautifier": "0.2.4",
-    "grunt-docco":"0.3.3"
+    "grunt-docco": "0.3.3",
+    "grunt-jsbeautifier": "0.2.4"
   }
 }

@@ -95,10 +95,8 @@
       }
       var bus = this._getEventBus();
       this._viewMetadata.topicList[topic].push(bus.subscribe(topic, callback));
-      log("subscribed topic -> " + topic);
     },
     unsubscribeGlobalEvent: function(topic) {
-      log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
       if (this._viewMetadata.topicList[topic] !== undefined) {
         this._viewMetadata.topicList[topic].map(function(v, i) {
@@ -107,8 +105,7 @@
         delete this._viewMetadata.topicList[topic];
       }
     },
-    publishGlobalEvent: function(topic, val) {
-      log("publishing topic ->" + arguments);
+    publishGlobalEvent: function(topic) {
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },

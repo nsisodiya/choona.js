@@ -89,16 +89,16 @@
   choona.Util = {
     //@msg - Message to be logged
     //@param: {String} msg - message to be logged
-    log: function(msg) {
+    log: function() {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
-        console.log(msg);
+        console.log.apply(console, arguments);
       }
     },
     //@msg - Error Message to be logged
     //choona.Util.logError(), can be used to log error messages to console.
-    logError: function(msg) {
+    logError: function() {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
-        console.error(msg);
+        console.error.apply(console, arguments);
       }
     },
     bindEvent: function(ele, eventName, callback) {
@@ -125,6 +125,8 @@
 })();
 ;(function() {
   "use strict";
+
+  var log = choona.Util.log;
   choona.EventBus = choona.Base.extend({
     initialize: function() {
       this._NewsPaperList = {};
@@ -136,6 +138,7 @@
     },
     //Old Syntax
     subscribe: function(newsPaper, address) {
+      log("subscribed ", newsPaper);
       if ((typeof newsPaper !== "string") || (typeof address !== "function")) {
         return -1;
       }
@@ -159,6 +162,7 @@
     unsubscribe: function(orderId) {
       var O = this._OrderList[orderId];
       if (O !== undefined) {
+        log("unsubscribe ", O.newsPaper);
         delete this._NewsPaperList[O.newsPaper][O.customer];
       }
     },
@@ -167,7 +171,8 @@
       this.publish.apply(this, arguments);
     },
     //old Syntax
-    publish: function() {
+    publish: function(topic) {
+      log.apply(null, arguments);
       var Arr = Array.prototype.slice.call(arguments);
       var newsPaper = Arr.slice(0, 1)[0];
       Arr.shift();
@@ -291,10 +296,8 @@
       }
       var bus = this._getEventBus();
       this._viewMetadata.topicList[topic].push(bus.subscribe(topic, callback));
-      log("subscribed topic -> " + topic);
     },
     unsubscribeGlobalEvent: function(topic) {
-      log("unsubscribing topic -> " + topic);
       var bus = this._getEventBus();
       if (this._viewMetadata.topicList[topic] !== undefined) {
         this._viewMetadata.topicList[topic].map(function(v, i) {
@@ -303,8 +306,7 @@
         delete this._viewMetadata.topicList[topic];
       }
     },
-    publishGlobalEvent: function(topic, val) {
-      log("publishing topic ->" + arguments);
+    publishGlobalEvent: function(topic) {
       var bus = this._getEventBus();
       bus.publish.apply(bus, arguments);
     },
@@ -515,4 +517,13 @@
       delete this.onPopstate;
     }
   });
+})();
+;// AMD registration happens at the end for compatibility with AMD loaders
+(function() {
+  "use strict";
+  if (typeof define === "function" && define.amd) {
+    define("choona", [], function() {
+      return choona;
+    });
+  }
 })();

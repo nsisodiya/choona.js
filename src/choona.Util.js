@@ -24,16 +24,16 @@
   choona.Util = {
     //@msg - Message to be logged
     //@param: {String} msg - message to be logged
-    log: function(msg) {
+    log: function() {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
-        console.log(msg);
+        console.log.apply(console, arguments);
       }
     },
     //@msg - Error Message to be logged
     //choona.Util.logError(), can be used to log error messages to console.
-    logError: function(msg) {
+    logError: function() {
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
-        console.error(msg);
+        console.error.apply(console, arguments);
       }
     },
     bindEvent: function(ele, eventName, callback) {

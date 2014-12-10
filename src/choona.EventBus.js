@@ -1,5 +1,7 @@
 (function() {
   "use strict";
+
+  var log = choona.Util.log;
   choona.EventBus = choona.Base.extend({
     initialize: function() {
       this._NewsPaperList = {};
@@ -11,6 +13,7 @@
     },
     //Old Syntax
     subscribe: function(newsPaper, address) {
+      log("subscribed ", newsPaper);
       if ((typeof newsPaper !== "string") || (typeof address !== "function")) {
         return -1;
       }
@@ -34,6 +37,7 @@
     unsubscribe: function(orderId) {
       var O = this._OrderList[orderId];
       if (O !== undefined) {
+        log("unsubscribe ", O.newsPaper);
         delete this._NewsPaperList[O.newsPaper][O.customer];
       }
     },
@@ -42,7 +46,8 @@
       this.publish.apply(this, arguments);
     },
     //old Syntax
-    publish: function() {
+    publish: function(topic) {
+      log.apply(null, arguments);
       var Arr = Array.prototype.slice.call(arguments);
       var newsPaper = Arr.slice(0, 1)[0];
       Arr.shift();

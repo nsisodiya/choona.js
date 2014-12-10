@@ -25,7 +25,8 @@
     "jQuery": true,
     "Element": true,
     "history": true,
-    "window": true
+    "window": true,
+    "define": true
 	}
 }
 

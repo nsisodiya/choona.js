@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
   "use strict";
   // Project configuration.
-  var jsFiles = ["./Gruntfile.js", "src/**/*.js", "choona.js"];
+  var jsFiles = ["./Gruntfile.js", "src/**/*.js"];
   var jsbeautifierconfigObject = grunt.file.readJSON("jsbeautifier.json");
   var sourceJsFiles = [
     "src/headerNotice.md",
@@ -12,7 +12,8 @@ module.exports = function(grunt) {
     "src/choona.EventBus.js",
     "src/choona.Model.js",
     "src/choona.View.js",
-    "src/choona.Router.js"
+    "src/choona.Router.js",
+    "src/choona.AMD.js"
   ];
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
