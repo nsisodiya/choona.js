@@ -50,6 +50,23 @@
         }
       }
     },
+    addProperty: function(obj, prop, getCallback, setCallback) {
+      var v;
+      //var v = obj[prop]; //Initialise with Old Property Value
+      Object.defineProperty(obj, prop, {
+        enumerable: true,
+        configurable: true,
+        get: function() {
+          getCallback(v);
+          return v;
+        },
+        set: function(value) {
+          v = value;
+          setCallback(v);
+        }
+      });
+
+    },
     loadHTML: function(ele, str) {
       ele.innerHTML = str;
       //TODO - find any submodule

@@ -115,6 +115,23 @@
         }
       }
     },
+    addProperty: function(obj, prop, getCallback, setCallback) {
+      var v;
+      //var v = obj[prop]; //Initialise with Old Property Value
+      Object.defineProperty(obj, prop, {
+        enumerable: true,
+        configurable: true,
+        get: function() {
+          getCallback(v);
+          return v;
+        },
+        set: function(value) {
+          v = value;
+          setCallback(v);
+        }
+      });
+
+    },
     loadHTML: function(ele, str) {
       ele.innerHTML = str;
       //TODO - find any submodule
@@ -192,7 +209,26 @@
   "use strict";
   choona.Model = choona.EventBus.extend({
     initialize: function() {
-      choona.EventBus.call(this);
+      choona.EventBus.apply(this, arguments);
+      this.loadDefaults();
+    },
+    loadDefaults: function() {
+      var self = this;
+      choona.Util.for(this.defaults, function(v, key) {
+        self.addProperty(key);
+      });
+    },
+    addProperty: function(key) {
+      var self = this;
+      choona.Util.addProperty(this,
+        key,
+        function() {
+          //Get Callback
+        },
+        function(val) {
+          //Set Callback
+          this.publish("change:" + key);
+        });
     },
     publishChange: function() {
       this.publish("change");
