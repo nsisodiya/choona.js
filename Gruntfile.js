@@ -7,6 +7,7 @@ module.exports = function(grunt) {
     "src/headerNotice.md",
     "src/choona.Klass.js",
     "src/choona.Base.js",
+    "src/choona.uniqueIdManager.js",
     "src/choona.Settings.js",
     "src/choona.Util.js",
     "src/choona.EventBus.js",
