@@ -19,7 +19,6 @@ choona.Settings.preStart = function(){
 
 
 choona.loadView({
-  id:"app",
   module: App.SlideShow,
   config: ["img/1.jpg", "img/2.jpg", "img/3.jpg", "img/4.jpg", "img/5.jpg"]
 });

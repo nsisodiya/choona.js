@@ -26,7 +26,8 @@
     "Element": true,
     "history": true,
     "window": true,
-    "define": true
+    "define": true,
+    "XMLHttpRequest": true
 	}
 }
 

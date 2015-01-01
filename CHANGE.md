@@ -5,15 +5,19 @@ Change Log
 Latest Release
 ===============
 
-**1.4.0**  Major changes , release date 1 July 2014
-
-* Complete revamp of code base
-* added klass.js, Everything in Choona now extend from klass.js
-
-
 
 Older releases
 =============
+
+* 1.3.4 - on 1 Jan 2015
+
+Now, Id will be generated automatically. You need now to pass id when loading any AppView or subView
+
+* 1.3.3 - on 26 Dec 2014
+
+Complete revamp of code base
+
+added klass.js, Everything in Choona now extend from klass.js
 
 * 1.3.2		
 

@@ -267,9 +267,23 @@
   choona.Settings.GlobalEventBus = new choona.EventBus();
 
   var log = choona.Util.log;
+  var logError = choona.Util.logError;
+
   choona.View = choona.Base.extend({
     initialize: function(moduleConf, subModuleConf) {
       choona.Base.call(this);
+
+      if (moduleConf.id === undefined) {
+        moduleConf.id = choona.uniqueIdManager.getId();
+        var d = document.createElement("div");
+        d.setAttribute("id", moduleConf.id);
+
+        if (subModuleConf !== undefined) {
+          subModuleConf.parentNode.appendChild(d);
+        } else {
+          document.body.appendChild(d);
+        }
+      }
 
       this.config = moduleConf.config;
       this._viewMetadata = {
@@ -280,10 +294,6 @@
         eventsMap: [],
         mercykillFunc: null
       };
-
-      if (typeof moduleConf.id !== "string" || moduleConf.id === "") {
-        throw new Error("Id provided is not String or it is a blank sting");
-      }
 
       if (subModuleConf !== undefined) {
         this._viewMetadata.mercykillFunc = subModuleConf.mercykillFunc;
@@ -433,7 +443,7 @@
       }
     },
     end: function() {
-      console.log("Ending base View");
+      log("Ending base View");
     },
     _endModule: function() {
 

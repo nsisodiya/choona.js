@@ -58,14 +58,14 @@ Loading application level View
 
 ```javascript
 	var <module-object> = choona.loadView({
-		id : <id-of-container>, 
-		module: <Application-View>, 
+		module: <Application-View>,
+		id : <id-of-container>,
 		config: <optional-configuration-object>
 	});
 ```
 
 ### id-of-container
-Every module/application need a node to load itself.
+optional - Every module/application need a node to load itself. it is optional parameter, choona.js will create new id automatically.
 
 ### Application-View
 This is the Application itself. This is the starting point of the code.
@@ -78,7 +78,6 @@ This is an optional configuration argument. An Module can read its optional conf
 
 ```html
     <body>
-        <div id="app"></div>
     </body>
 ```
 
@@ -101,7 +100,6 @@ This is an optional configuration argument. An Module can read its optional conf
 	});
 	//Start Application
 	new choona.loadView({
-		id: "app", 
 		module: helloWorldApp
 	});
 ```
@@ -175,8 +173,8 @@ When a view is ended, all its events got unsubscribed automatically**
 ### this.loadSubView  ==> Load a subView inside current View
 ```javascript
 	this.loadSubView({
-		id : <id-of-container>, 
-		module: <Sub-View>, 
+		module: <Sub-View>,
+		id : <optional-id-of-container>,
 		config: <optional-configuration-object>
 	});
 ```
