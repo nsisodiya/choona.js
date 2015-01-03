@@ -124,9 +124,6 @@
       if (data === undefined) {
         throw new Error("loadSubView : argument received is undefined");
       } else {
-        if (data.id === undefined) {
-          throw new Error("loadSubView : id cannot be undefined");
-        }
         if (data.module === undefined) {
           throw new Error("loadSubView : module cannot be undefined");
         }
