@@ -384,6 +384,17 @@
     },
     loadSubView: function(data) {
       var self = this;
+      if (data === undefined) {
+        throw new Error("loadSubView : argument received is undefined");
+      } else {
+        if (data.id === undefined) {
+          throw new Error("loadSubView : id cannot be undefined");
+        }
+        if (data.module === undefined) {
+          throw new Error("loadSubView : module cannot be undefined");
+        }
+      }
+
       if (this._viewMetadata.subModuleList[data.id] === undefined) {
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
           parentNode: this.$,
@@ -491,7 +502,15 @@
   });
 
   choona.loadView = function(moduleConf) {
-    return new moduleConf.module(moduleConf);
+    if (moduleConf === undefined) {
+      throw new Error("choona.loadView received undefined, expecting object");
+    } else {
+      if (moduleConf.module === undefined) {
+        throw new Error("choona.loadView : module is undefined, expecting Function constructor");
+      } else {
+        return new moduleConf.module(moduleConf);
+      }
+    }
   };
 
 })();
