@@ -391,6 +391,12 @@
           throw new Error("loadSubView : module cannot be undefined");
         }
       }
+      if (data.id === undefined) {
+        data.id = choona.uniqueIdManager.getId();
+        var d = document.createElement("div");
+        d.setAttribute("id", data.id);
+        this.$.appendChild(d);
+      }
 
       if (this._viewMetadata.subModuleList[data.id] === undefined) {
         this._viewMetadata.subModuleList[data.id] = new data.module(data, {
