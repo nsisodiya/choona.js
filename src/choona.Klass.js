@@ -16,7 +16,7 @@ var choona = {};
     Child.prototype = Object.create(Parent.prototype);
     Child.prototype.constructor = Child;
     for (var i in ChildProto) {
-      if (ChildProto.hasOwnProperty(i)) {
+      if (ChildProto.hasOwnProperty(i) === true) {
         Child.prototype[i] = ChildProto[i];
       }
     }

@@ -9,6 +9,14 @@ Latest Release
 Older releases
 =============
 
+* 1.3.9 - on 8 Feb, 2015
+
+Fixed bug on event binding and Live events
+
+* 1.3.8 - on 4 Jan, 2015
+
+Fixed bug : multiple subViews was not loading !
+
 * 1.3.4 - on 1 Jan 2015
 
 Now, Id will be generated automatically. You need now to pass id when loading any AppView or subView

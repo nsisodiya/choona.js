@@ -1,8 +1,8 @@
 /**
- * Copyright 2013-14 Narendra Sisodiya, <narendra@narendrasisodiya.com>
+ * Copyright 2013-15 Narendra Sisodiya, <narendra@narendrasisodiya.com>
  * Licensed under "The MIT License". visit http://nsisodiya.mit-license.org/ to read the License.
  * @author Narendra Sisodiya
- *
+ * Version - 1.3.9
  */
  ;var choona = {};
 (function() {
@@ -22,7 +22,7 @@
     Child.prototype = Object.create(Parent.prototype);
     Child.prototype.constructor = Child;
     for (var i in ChildProto) {
-      if (ChildProto.hasOwnProperty(i)) {
+      if (ChildProto.hasOwnProperty(i) === true) {
         Child.prototype[i] = ChildProto[i];
       }
     }
@@ -136,7 +136,7 @@
     //Replacement for _.each over Objects
     for: function(Obj, callback) {
       for (var i in Obj) {
-        if (Obj.hasOwnProperty(i)) {
+        if (Obj.hasOwnProperty(i) === true) {
           callback(Obj[i], i);
         }
       }
@@ -291,7 +291,7 @@
         topicList: {},
         subModuleList: {},
         id: moduleConf.id,
-        eventsMap: [],
+        eventsMap: {},
         mercykillFunc: null
       };
 
@@ -308,7 +308,7 @@
       }
 
       //setup this.$el & this.$$ if jQuery present.
-      if (window.jQuery) {
+      if (window.jQuery !== undefined && typeof window.jQuery === "function") {
         this.$el = this.$$ = window.jQuery(this.$);
       }
 
@@ -328,7 +328,8 @@
        * because, you need to get event bus for
        * */
 
-      //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create conflicts in naming
+      //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create
+      // conflicts in naming
       if (this.isolatedEventBus === true) {
         this._viewMetadata.eventBus = new choona.EventBus();
       }
@@ -434,10 +435,16 @@
 
         var callback = function(e) {
           if (hash === "") {
-            self[handler].call(self, e, e.target, e.target.dataset);
+            self[handler].call(self, e, e.currentTarget, e.currentTarget.dataset);
           } else {
-            if (e.target.matches(hash)) {
-              self[handler].call(self, e, e.target, e.target.dataset);
+            var currNode;
+            currNode = e.target;
+            while (currNode !== e.currentTarget && currNode !== document) {
+              if (currNode.matches(hash) === true) {
+                self[handler].call(self, e, currNode, currNode.dataset);
+                break;
+              }
+              currNode = currNode.parentNode;
             }
           }
         };
@@ -478,7 +485,7 @@
       }
 
       //unSubscribing All DOM events
-      this._viewMetadata.eventsMap.map(function(v, key) {
+      choona.Util.for(this._viewMetadata.eventsMap, function(v, key) {
         self.off(key);
       });
 
@@ -501,6 +508,9 @@
       delete this._viewMetadata.topicList;
       delete this._viewMetadata.eventsMap;
       delete this._viewMetadata;
+      choona.Util.for(this, function(v, key) {
+        delete self[key];
+      });
     }
   });
 

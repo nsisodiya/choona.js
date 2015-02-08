@@ -28,7 +28,7 @@
         topicList: {},
         subModuleList: {},
         id: moduleConf.id,
-        eventsMap: [],
+        eventsMap: {},
         mercykillFunc: null
       };
 
@@ -45,7 +45,7 @@
       }
 
       //setup this.$el & this.$$ if jQuery present.
-      if (window.jQuery) {
+      if (window.jQuery !== undefined && typeof window.jQuery === "function") {
         this.$el = this.$$ = window.jQuery(this.$);
       }
 
@@ -65,7 +65,8 @@
        * because, you need to get event bus for
        * */
 
-      //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create conflicts in naming
+      //Start Isolated EventBus , this will be useful for creating third party widget who do not want to create
+      // conflicts in naming
       if (this.isolatedEventBus === true) {
         this._viewMetadata.eventBus = new choona.EventBus();
       }
@@ -171,10 +172,16 @@
 
         var callback = function(e) {
           if (hash === "") {
-            self[handler].call(self, e, e.target, e.target.dataset);
+            self[handler].call(self, e, e.currentTarget, e.currentTarget.dataset);
           } else {
-            if (e.target.matches(hash)) {
-              self[handler].call(self, e, e.target, e.target.dataset);
+            var currNode;
+            currNode = e.target;
+            while (currNode !== e.currentTarget && currNode !== document) {
+              if (currNode.matches(hash) === true) {
+                self[handler].call(self, e, currNode, currNode.dataset);
+                break;
+              }
+              currNode = currNode.parentNode;
             }
           }
         };
@@ -215,7 +222,7 @@
       }
 
       //unSubscribing All DOM events
-      this._viewMetadata.eventsMap.map(function(v, key) {
+      choona.Util.for(this._viewMetadata.eventsMap, function(v, key) {
         self.off(key);
       });
 
@@ -238,6 +245,9 @@
       delete this._viewMetadata.topicList;
       delete this._viewMetadata.eventsMap;
       delete this._viewMetadata;
+      choona.Util.for(this, function(v, key) {
+        delete self[key];
+      });
     }
   });
 

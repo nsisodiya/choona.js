@@ -45,7 +45,7 @@
     //Replacement for _.each over Objects
     for: function(Obj, callback) {
       for (var i in Obj) {
-        if (Obj.hasOwnProperty(i)) {
+        if (Obj.hasOwnProperty(i) === true) {
           callback(Obj[i], i);
         }
       }
