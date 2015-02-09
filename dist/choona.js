@@ -92,26 +92,6 @@
 ;(function() {
   "use strict";
 
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
-
-  // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function(eventName, listener) {
-    return this.attachEvent("on" + eventName, listener);
-  };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function(eventName, listener) {
-    return this.detachEvent("on" + eventName, listener);
-  };
-  ElementProto.matchesSelector =
-    ElementProto.matches ||
-    ElementProto.webkitMatchesSelector ||
-    ElementProto.mozMatchesSelector ||
-    ElementProto.msMatchesSelector;
-
-  if (!ElementProto.matches) {
-    ElementProto.matches = ElementProto.matchesSelector;
-  }
-
   choona.Util = {
     //@msg - Message to be logged
     //@param: {String} msg - message to be logged
@@ -126,12 +106,6 @@
       if (choona.Settings.debug === true && choona.Settings.isConsoleAvailable === true) {
         console.error.apply(console, arguments);
       }
-    },
-    bindEvent: function(ele, eventName, callback) {
-      elementAddEventListener.call(ele, eventName, callback, false);
-    },
-    unbindEvent: function(ele, eventName, callback) {
-      elementRemoveEventListener.call(ele, eventName, callback);
     },
     //Replacement for _.each over Objects
     for: function(Obj, callback) {
@@ -230,6 +204,55 @@
       }
     }
   });
+})();
+;(function() {
+  "use strict";
+  // Caches a local reference to `Element.prototype` for faster access.
+  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
+
+  // Cross-browser event listener shims
+  var elementAddEventListener = ElementProto.addEventListener || function(eventName, listener) {
+    return this.attachEvent("on" + eventName, listener);
+  };
+  var elementRemoveEventListener = ElementProto.removeEventListener || function(eventName, listener) {
+    return this.detachEvent("on" + eventName, listener);
+  };
+  ElementProto.matchesSelector =
+    ElementProto.matches ||
+    ElementProto.webkitMatchesSelector ||
+    ElementProto.mozMatchesSelector ||
+    ElementProto.msMatchesSelector;
+
+  if (!ElementProto.matches) {
+    ElementProto.matches = ElementProto.matchesSelector;
+  }
+  choona.DomEvents = {
+    addLiveEventListener: function(ele, eventName, hash, eventCallback, context) {
+      var callback = function(e) {
+        var currNode = e.target;
+        if (hash === "") {
+          eventCallback.call(context, e, e.currentTarget, e.currentTarget.dataset);
+        } else {
+          while (currNode !== e.currentTarget && currNode !== document) {
+            if (currNode.matches(hash) === true) {
+              eventCallback.call(context, e, currNode, currNode.dataset);
+              break;
+            }
+            currNode = currNode.parentNode;
+          }
+        }
+      };
+      this.addEventListener(ele, eventName, callback);
+      return callback;
+    },
+    addEventListener: function(ele, eventName, callback) {
+      elementAddEventListener.call(ele, eventName, callback, false);
+    },
+    removeEventListener: function(ele, eventName, callback) {
+      elementRemoveEventListener.call(ele, eventName, callback);
+    }
+  };
+
 })();
 ;(function() {
   "use strict";
@@ -424,31 +447,14 @@
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
     on: function(obj) {
-      //We use {"eventName hash":"handler"} kind of notation !
+      //We use {"eventName hash":"methodName"} kind of notation !
       var self = this;
-      choona.Util.for(obj, function(handler, key) {
+      choona.Util.for(obj, function(methodName, key) {
         key = key.trim().replace(/ +/g, " ");
-
         var arr = key.split(" ");
         var eventName = arr.shift();
         var hash = arr.join(" ");
-
-        var callback = function(e) {
-          if (hash === "") {
-            self[handler].call(self, e, e.currentTarget, e.currentTarget.dataset);
-          } else {
-            var currNode;
-            currNode = e.target;
-            while (currNode !== e.currentTarget && currNode !== document) {
-              if (currNode.matches(hash) === true) {
-                self[handler].call(self, e, currNode, currNode.dataset);
-                break;
-              }
-              currNode = currNode.parentNode;
-            }
-          }
-        };
-        choona.Util.bindEvent(self.$, eventName, callback);
+        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName]);
         self._viewMetadata.eventsMap[key] = {
           eventName: eventName,
           callback: callback
@@ -459,7 +465,7 @@
       //Unsubscribe dom event
       var v = this._viewMetadata.eventsMap[key];
       if (v !== undefined && typeof v === "object") {
-        choona.Util.unbindEvent(this.$, v.eventName, v.callback);
+        choona.DomEvents.removeEventListener(this.$, v.eventName, v.callback);
         delete this._viewMetadata.eventsMap[key];
       }
     },
@@ -580,8 +586,8 @@
         var path = document.location.pathname;
         self.loadPath(path, true);
       };
-      choona.Util.bindEvent(document, "click", this.onDocumentClick);
-      choona.Util.bindEvent(window, "popstate", this.onPopstate);
+      choona.DomEvents.addEventListener(document, "click", this.onDocumentClick);
+      choona.DomEvents.addEventListener(window, "popstate", this.onPopstate);
     },
     template: "<router id='router'></router>",
     loadPath: function(path, back) {
@@ -615,8 +621,8 @@
       return !pathMatched;
     },
     end: function() {
-      choona.Util.unbindEvent(document, "click", this.onDocumentClick);
-      choona.Util.unbindEvent(window, "popstate", this.onPopstate);
+      choona.DomEvents.removeEventListener(document, "click", this.onDocumentClick);
+      choona.DomEvents.removeEventListener(window, "popstate", this.onPopstate);
       delete this.onDocumentClick;
       delete this.onPopstate;
     }

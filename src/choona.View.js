@@ -163,29 +163,12 @@
     on: function(obj) {
       //We use {"eventName hash":"handler"} kind of notation !
       var self = this;
-      choona.Util.for(obj, function(handler, key) {
+      choona.Util.for(obj, function(methodName, key) {
         key = key.trim().replace(/ +/g, " ");
-
         var arr = key.split(" ");
         var eventName = arr.shift();
         var hash = arr.join(" ");
-
-        var callback = function(e) {
-          if (hash === "") {
-            self[handler].call(self, e, e.currentTarget, e.currentTarget.dataset);
-          } else {
-            var currNode;
-            currNode = e.target;
-            while (currNode !== e.currentTarget && currNode !== document) {
-              if (currNode.matches(hash) === true) {
-                self[handler].call(self, e, currNode, currNode.dataset);
-                break;
-              }
-              currNode = currNode.parentNode;
-            }
-          }
-        };
-        choona.Util.bindEvent(self.$, eventName, callback);
+        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName]);
         self._viewMetadata.eventsMap[key] = {
           eventName: eventName,
           callback: callback
@@ -196,7 +179,7 @@
       //Unsubscribe dom event
       var v = this._viewMetadata.eventsMap[key];
       if (v !== undefined && typeof v === "object") {
-        choona.Util.unbindEvent(this.$, v.eventName, v.callback);
+        choona.DomEvents.removeEventListener(this.$, v.eventName, v.callback);
         delete this._viewMetadata.eventsMap[key];
       }
     },
