@@ -447,14 +447,14 @@
       //Deletion is needed because if parent get Ended, it should not try to delete the module again.
     },
     on: function(obj) {
-      //We use {"eventName hash":"methodName"} kind of notation !
+      //We use {"eventName hash":"handler"} kind of notation !
       var self = this;
       choona.Util.for(obj, function(methodName, key) {
         key = key.trim().replace(/ +/g, " ");
         var arr = key.split(" ");
         var eventName = arr.shift();
         var hash = arr.join(" ");
-        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName]);
+        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName], self);
         self._viewMetadata.eventsMap[key] = {
           eventName: eventName,
           callback: callback

@@ -168,7 +168,7 @@
         var arr = key.split(" ");
         var eventName = arr.shift();
         var hash = arr.join(" ");
-        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName]);
+        var callback = choona.DomEvents.addLiveEventListener(self.$, eventName, hash, self[methodName], self);
         self._viewMetadata.eventsMap[key] = {
           eventName: eventName,
           callback: callback
