@@ -233,7 +233,7 @@
         if (hash === "") {
           eventCallback.call(context, e, e.currentTarget, e.currentTarget.dataset);
         } else {
-          while (currNode !== e.currentTarget && currNode !== document) {
+          while (currNode !== e.currentTarget && currNode !== document && currNode !== null) {
             if (currNode.matches(hash) === true) {
               eventCallback.call(context, e, currNode, currNode.dataset);
               break;

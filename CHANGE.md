@@ -8,6 +8,9 @@ Latest Release
 
 Older releases
 =============
+* 1.3.12 - on 8 March 2015
+
+Fixed bug on event binding. currNode can be null
 
 * 1.3.9 - on 8 Feb, 2015
 
