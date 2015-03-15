@@ -27,7 +27,8 @@
     "history": true,
     "window": true,
     "define": true,
-    "XMLHttpRequest": true
+    "XMLHttpRequest": true,
+    "HTMLElement": true
 	}
 }
 
