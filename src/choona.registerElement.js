@@ -6,10 +6,9 @@
   "use strict";
   choona.nodeToViewMapping = new choona.WeakMap();
 
-  choona.registerElement = function(viewConstructorProto) {
+  choona.registerElement = function(ViewConstructor) {
     var ElementPrototype = Object.create(HTMLElement.prototype);
     ElementPrototype.createdCallback = function() {
-      var ViewConstructor = choona.ElementView.extend(viewConstructorProto);
       var view = new ViewConstructor({
         ele: this
       });
@@ -68,8 +67,8 @@
       }
     };
 
-    if (viewConstructorProto.accessors !== undefined) {
-      choona.Util.for(viewConstructorProto.accessors, function(attrObj, attrName) {
+    if (ViewConstructor.prototype.accessors !== undefined) {
+      choona.Util.for(ViewConstructor.prototype.accessors, function(attrObj, attrName) {
         var Prop = {};
         Prop[attrName] = {
           get: function() {
@@ -104,10 +103,10 @@
     }
 
     if (typeof document.registerElement === "function") {
-      var elementName = viewConstructorProto.tagName.split("-").map(function(v) {
+      var elementName = ViewConstructor.prototype.tagName.split("-").map(function(v) {
         return v.charAt(0).toUpperCase() + v.slice(1);
       }).join("") + "Element";
-      window[elementName] = document.registerElement(viewConstructorProto.tagName, {
+      window[elementName] = document.registerElement(ViewConstructor.prototype.tagName, {
         prototype: ElementPrototype
       });
     } else {
