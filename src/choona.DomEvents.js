@@ -45,6 +45,9 @@
       elementRemoveEventListener.call(ele, eventName, callback);
     },
     trigger: function(target, type, options) {
+      if (options === undefined) {
+        options = {};
+      }
       var event = document.createEvent("CustomEvent");
       event.initCustomEvent(type, options.bubbles !== false, options.cancelable !== false);
       target.dispatchEvent(event);
