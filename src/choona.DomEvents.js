@@ -43,7 +43,11 @@
     },
     removeEventListener: function(ele, eventName, callback) {
       elementRemoveEventListener.call(ele, eventName, callback);
+    },
+    trigger: function(target, type, options) {
+      var event = document.createEvent("CustomEvent");
+      event.initCustomEvent(type, options.bubbles !== false, options.cancelable !== false);
+      target.dispatchEvent(event);
     }
   };
-
 })();

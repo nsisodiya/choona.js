@@ -28,7 +28,8 @@
     "window": true,
     "define": true,
     "XMLHttpRequest": true,
-    "HTMLElement": true
+    "HTMLElement": true,
+    "Event": true
 	}
 }
 

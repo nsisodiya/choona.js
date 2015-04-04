@@ -213,6 +213,10 @@
         delete this._viewMetadata.eventsMap[key];
       }
     },
+    trigger: function(eventName) {
+      //Default Trigger will be on this.$ which is our custom event.
+      choona.DomEvents.trigger(this.$, eventName);
+    },
     _endModule: function() {
 
       //call postEnd();
