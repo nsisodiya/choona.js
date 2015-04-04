@@ -25,8 +25,14 @@
       view._endModule();
       choona.nodeToViewMapping.remove(this);
     };
-    ElementPrototype.attributeChangedCallback = function() {
+    ElementPrototype.attributeChangedCallback = function(attrName) {
       var view = choona.nodeToViewMapping.get(this);
+      var mainArgs = arguments;
+      choona.Util.for(view.accessors, function(config, name) {
+        if (name.toLowerCase() === attrName && typeof config.onChange === "string") {
+          view[config.onChange].apply(view, mainArgs);
+        }
+      });
       view.attributeChangedCallback.apply(view, arguments);
     };
 
