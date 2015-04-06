@@ -1,15 +1,7 @@
 (function() {
   "use strict";
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
 
-  // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function(eventName, listener) {
-    return this.attachEvent("on" + eventName, listener);
-  };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function(eventName, listener) {
-    return this.detachEvent("on" + eventName, listener);
-  };
+  var ElementProto = Element.prototype;
   ElementProto.matchesSelector =
     ElementProto.matches ||
     ElementProto.webkitMatchesSelector ||
@@ -35,14 +27,8 @@
           }
         }
       };
-      this.addEventListener(ele, eventName, callback);
+      ele.addEventListener(eventName, callback, false);
       return callback;
-    },
-    addEventListener: function(ele, eventName, callback) {
-      elementAddEventListener.call(ele, eventName, callback, false);
-    },
-    removeEventListener: function(ele, eventName, callback) {
-      elementRemoveEventListener.call(ele, eventName, callback);
     },
     trigger: function(target, type, options) {
       if (options === undefined) {

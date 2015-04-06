@@ -215,7 +215,7 @@
       //Unsubscribe dom event
       var v = this._viewMetadata.eventsMap[key];
       if (v !== undefined && typeof v === "object") {
-        choona.DomEvents.removeEventListener(this.$, v.eventName, v.callback);
+        this.$.removeEventListener(v.eventName, v.callback);
         delete this._viewMetadata.eventsMap[key];
       }
     },

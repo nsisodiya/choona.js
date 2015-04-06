@@ -51,8 +51,9 @@
         var path = document.location.pathname;
         self.loadPath(path, true);
       };
-      choona.DomEvents.addEventListener(document, "click", this.onDocumentClick);
-      choona.DomEvents.addEventListener(window, "popstate", this.onPopstate);
+
+      document.addEventListener("click", this.onDocumentClick, false);
+      window.addEventListener("popstate", this.onPopstate, false);
     },
     template: "<router id='router'></router>",
     loadPath: function(path, back) {
@@ -86,8 +87,8 @@
       return !pathMatched;
     },
     end: function() {
-      choona.DomEvents.removeEventListener(document, "click", this.onDocumentClick);
-      choona.DomEvents.removeEventListener(window, "popstate", this.onPopstate);
+      document.removeEventListener("click", this.onDocumentClick);
+      window.removeEventListener("popstate", this.onPopstate);
       delete this.onDocumentClick;
       delete this.onPopstate;
     }

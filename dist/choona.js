@@ -207,16 +207,8 @@
 })();
 ;(function() {
   "use strict";
-  // Caches a local reference to `Element.prototype` for faster access.
-  var ElementProto = (typeof Element !== "undefined" && Element.prototype) || {};
 
-  // Cross-browser event listener shims
-  var elementAddEventListener = ElementProto.addEventListener || function(eventName, listener) {
-    return this.attachEvent("on" + eventName, listener);
-  };
-  var elementRemoveEventListener = ElementProto.removeEventListener || function(eventName, listener) {
-    return this.detachEvent("on" + eventName, listener);
-  };
+  var ElementProto = Element.prototype;
   ElementProto.matchesSelector =
     ElementProto.matches ||
     ElementProto.webkitMatchesSelector ||
@@ -242,14 +234,8 @@
           }
         }
       };
-      this.addEventListener(ele, eventName, callback);
+      ele.addEventListener(eventName, callback, false);
       return callback;
-    },
-    addEventListener: function(ele, eventName, callback) {
-      elementAddEventListener.call(ele, eventName, callback, false);
-    },
-    removeEventListener: function(ele, eventName, callback) {
-      elementRemoveEventListener.call(ele, eventName, callback);
     },
     trigger: function(target, type, options) {
       if (options === undefined) {
@@ -472,7 +458,7 @@
       //Unsubscribe dom event
       var v = this._viewMetadata.eventsMap[key];
       if (v !== undefined && typeof v === "object") {
-        choona.DomEvents.removeEventListener(this.$, v.eventName, v.callback);
+        this.$.removeEventListener(v.eventName, v.callback);
         delete this._viewMetadata.eventsMap[key];
       }
     },
@@ -593,8 +579,9 @@
         var path = document.location.pathname;
         self.loadPath(path, true);
       };
-      choona.DomEvents.addEventListener(document, "click", this.onDocumentClick);
-      choona.DomEvents.addEventListener(window, "popstate", this.onPopstate);
+
+      document.addEventListener("click", this.onDocumentClick, false);
+      window.addEventListener("popstate", this.onPopstate, false);
     },
     template: "<router id='router'></router>",
     loadPath: function(path, back) {
@@ -628,8 +615,8 @@
       return !pathMatched;
     },
     end: function() {
-      choona.DomEvents.removeEventListener(document, "click", this.onDocumentClick);
-      choona.DomEvents.removeEventListener(window, "popstate", this.onPopstate);
+      document.removeEventListener("click", this.onDocumentClick);
+      window.removeEventListener("popstate", this.onPopstate);
       delete this.onDocumentClick;
       delete this.onPopstate;
     }
