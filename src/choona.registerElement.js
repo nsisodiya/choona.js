@@ -25,6 +25,23 @@
       view._endModule();
       choona.nodeToViewMapping.remove(this);
     };
+
+    if (ViewConstructor.prototype.methods !== undefined) {
+      ElementPrototype._commonMethod = function(methodName, args) {
+        var view = choona.nodeToViewMapping.get(this);
+        var f = view[methodName];
+        if (typeof f === "function") {
+          f.apply(view, args);
+        }
+      };
+      //Append method on EP
+      ViewConstructor.prototype.methods.map(function(methodName, i) {
+        ElementPrototype[methodName] = function() {
+          ElementPrototype._commonMethod.call(this, methodName, arguments);
+        };
+      });
+    }
+
     ElementPrototype.attributeChangedCallback = function(attrName) {
       var view = choona.nodeToViewMapping.get(this);
       var mainArgs = arguments;
