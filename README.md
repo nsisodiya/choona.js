@@ -39,11 +39,6 @@ Install
  bower install choona.js#1.3.2
  
 
-Demo
-=============
-Visit http://nsisodiya.github.com/Demo-Scalable-App
-
-
 Dependancy
 ============
 choona.js do not has any dependancy. It is written is Plain JavaScript.
