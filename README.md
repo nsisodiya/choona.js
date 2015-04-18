@@ -1,14 +1,11 @@
-IMP Notice
-==========
-Please use 
-  bower install choona.js#1.3.2
-
-for installing, current code in master is UNSTABLE
-
 choona.js
 =========
 A decoupled, event-driven architecture for developing large scale modular JavaScript applications.
-fully inspired by - https://github.com/eric-brechemier/lb_js_scalableApp
+Inspired by
+* https://www.youtube.com/watch?v=mKouqShWI4o
+* https://github.com/eric-brechemier/lb_js_scalableApp
+* Backbone Views
+
 
 Who use choona.js
 =================
@@ -18,8 +15,15 @@ Who use choona.js
 Size
 ====
 It is very small is size 
-(1.3 KB when minified & gZipped)!
-(3.6 KB when minified)
+(2.9 KB when minified & gZipped)!
+(9.2 KB when minified)
+
+Install
+==========
+
+```bash
+bower install choona.js
+```
 
 License
 ========
@@ -32,17 +36,11 @@ Features
 * replacing any module without affecting other modules
 * concept of sub module
 * recursive end of submodules
-* local eventBus
-
-Install
-==========
- bower install choona.js#1.3.2
- 
+* eventBus for 
 
 Dependancy
 ============
-choona.js do not has any dependancy. It is written is Plain JavaScript.
-You can use Backbone, jQuery or any other frameworks if you wish. 
+Nothing
 
 View API
 ========
@@ -59,15 +57,14 @@ Loading application level View
 	});
 ```
 
-### id-of-container
-optional - Every module/application need a node to load itself. it is optional parameter, choona.js will create new id automatically.
-
 ### Application-View
 This is the Application itself. This is the starting point of the code.
 
-### optional-configuration-object
-This is an optional configuration argument. An Module can read its optional configuration from 
+### id-of-container
+optional - Every module/application need a node to load itself. it is optional parameter, choona.js will create new id automatically.
 
+### optional-configuration-object
+This is an optional configuration argument. An Module can read its optional configuration using ```this.config``` 
 
 ### Example
 
